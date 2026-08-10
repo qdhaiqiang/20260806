@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="zh-CN" data-document-role="page" data-label="2026-08-07 项目进度汇报">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>穿透式监管平台｜2026-08-07 进度汇报</title>
+  <style>
+    :root { --ink:#16233b; --muted:#65738b; --line:#e6ebf3; --blue:#1976d2; --pale:#f5f8fc; --green:#1c9b70; --amber:#dd8d1e; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:var(--pale); font:15px/1.65 "PingFang SC","Microsoft YaHei",Arial,sans-serif; }
+    .page { width:min(1160px,calc(100% - 40px)); margin:36px auto 60px; }
+    .hero { padding:40px 46px; border-radius:18px; color:#fff; background:linear-gradient(125deg,#103c76 0%,#1976d2 58%,#6aaaff 100%); box-shadow:0 14px 38px #2d5d9633; }
+    .eyebrow { margin:0 0 10px; opacity:.78; letter-spacing:.13em; font-size:12px; }
+    h1 { margin:0; font-size:30px; line-height:1.3; }
+    .summary { max-width:720px; margin:12px 0 0; opacity:.92; font-size:16px; }
+    .meta { display:flex; gap:28px; flex-wrap:wrap; margin-top:24px; font-size:13px; opacity:.86; }
+    .grid { display:grid; gap:16px; grid-template-columns:repeat(3,1fr); margin:22px 0; }
+    .card, section { background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 4px 14px #14234208; }
+    .card { padding:22px 24px; }
+    .number { display:block; font-size:31px; line-height:1; font-weight:750; color:var(--blue); }
+    .label { display:block; margin-top:7px; color:var(--muted); }
+    section { margin-top:18px; padding:28px 30px; }
+    h2 { margin:0 0 16px; font-size:20px; }
+    h3 { margin:0 0 6px; font-size:16px; }
+    p { margin:0 0 10px; }
+    ul { margin:8px 0 0; padding-left:20px; }
+    li { margin:6px 0; }
+    .two { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+    .item { padding:16px 0; border-top:1px solid var(--line); }
+    .item:first-child { border-top:0; padding-top:0; }
+    .tag { display:inline-block; padding:2px 9px; border-radius:99px; font-size:12px; font-weight:650; }
+    .done { color:#107153; background:#e6f7f1; }
+    .doing { color:#9b5c00; background:#fff4db; }
+    .verify { color:#245f9e; background:#e9f3ff; }
+    .evidence { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+    figure { margin:0; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:#fbfcfe; }
+    figure img { display:block; width:100%; height:245px; object-fit:cover; object-position:top left; border-bottom:1px solid var(--line); }
+    figcaption { padding:10px 12px; color:var(--muted); font-size:13px; }
+    .note { padding:14px 16px; border-left:4px solid var(--amber); border-radius:6px; background:#fffaf0; color:#704d18; }
+    code { padding:1px 5px; border-radius:4px; background:#f1f4f8; color:#39516e; font:12px ui-monospace,SFMono-Regular,Consolas,monospace; }
+    footer { margin:18px 0; color:#778398; font-size:12px; text-align:center; }
+    @media (max-width:760px) { .page { width:min(100% - 24px,1160px); margin-top:12px; } .hero,section { padding:24px 20px; } h1 { font-size:24px; } .grid,.two,.evidence { grid-template-columns:1fr; } figure img { height:auto; } }
+    @media print { body { background:#fff; } .page { width:100%; margin:0; } .hero { box-shadow:none; } section,.card { box-shadow:none; } }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <p class="eyebrow">DAILY DELIVERY UPDATE · 2026 / 08 / 07</p>
+      <h1>穿透式监管平台复刻项目｜当日进度汇报</h1>
+      <p class="summary">统计口径：今日 09:00 至 15:00。当前已形成可启动的本地前端、风险信息业务界面及本地 API 兼容实现；首页和风险信息列表已在浏览器中实际打开验证。</p>
+      <div class="meta"><span>报告生成：2026-08-07 15:00</span><span>前端：React + Vite</span><span>后端：Clojure + SQLite</span></div>
+    </header>
+
+    <div class="grid" aria-label="关键数据">
+      <article class="card"><strong class="number">5,867</strong><span class="label">前端有效代码</span></article>
+      <article class="card"><strong class="number">690</strong><span class="label">后端代码行数</span></article>
+      <article class="card"><strong class="number">9</strong><span class="label">本次开发页面（去重后独立路由）</span></article>
+      <article class="card"><strong class="number">14</strong><span class="label">本次开发的业务弹窗类型</span></article>
+      <article class="card"><strong class="number">32</strong><span class="label">本地 API 接口（方法 + 路径）</span></article>
+      <article class="card"><strong class="number">6</strong><span class="label">报告收录的本地运行截图</span></article>
+    </div>
+
+    <section>
+      <h2>本次开发规模</h2>
+      <div class="two">
+        <div>
+          <h3>页面：9 个</h3>
+          <p>首页、股权结构、风险监控（风险信息）、风险报告、统计分析、系统管理、企业管理、指标管理、待审核。首页的 <code>#/</code> 与 <code>#/index</code> 为同一页面，未重复计数。</p>
+        </div>
+        <div>
+          <h3>弹窗：14 类</h3>
+          <p>风险监控 6 类（详情、指标全景、处置计划、风险确认、风险消除、情况描述）；企业/指标维护 5 类（新增、编辑、风险级别设置）；待审核 3 类（详情、指标全景、审核）。</p>
+        </div>
+        <div>
+          <h3>接口：32 个</h3>
+          <p>按本次开发接口清单统计，覆盖登录、企业/指标管理、风险查询、导出、审核及风险闭环操作；同一路径的不同请求方法分别计数。</p>
+        </div>
+        <div>
+          <h3>前端有效代码：5,867 行</h3>
+          <p>统计范围为 <code>frontend/src</code> 内的 TypeScript、TSX 与 CSS 源码；不包含 <code>node_modules</code>、<code>dist</code> 和静态素材。</p>
+        </div>
+        <div>
+          <h3>后端代码：690 行</h3>
+          <p>统计范围为 <code>backend/src</code> 和 <code>backend/resources</code> 内的 Clojure、EDN 与 SQL 源码；不包含文档和数据库文件。</p>
+        </div>
+        <div>
+          <h3>统计说明</h3>
+          <p>以上是当前本地实现规模，不代表全量原系统已复刻完成；后续新增页面、弹窗或接口时应同步更新本报告。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>本日完成内容</h2>
+      <div class="two">
+        <div>
+          <div class="item"><span class="tag done">已完成</span><h3>本地前端骨架与首页</h3><p>完成平台顶部导航、企业检索入口、风险等级卡片和“风险直达”入口；已接入本地静态素材并生成生产构建产物。</p></div>
+          <div class="item"><span class="tag done">已完成</span><h3>风险信息核心工作台</h3><p>完成左侧风险分类导航、筛选栏、风险列表、分页以及随状态变化的“详情 / 指标全景 / 处置计划 / 风险消除 / 风险确认”操作入口。</p></div>
+          <div class="item"><span class="tag done">已完成</span><h3>管理与统计页面框架</h3><p>已落地股权结构、风险报告、统计分析、系统管理及待审核等主菜单/二级菜单对应页面框架和表格展示结构。</p></div>
+        </div>
+        <div>
+          <div class="item"><span class="tag done">已完成</span><h3>本地 API 兼容层</h3><p>补齐登录、风险分页/导出/审核、企业和指标管理，以及风险情况描述、确认审核、处置计划等接口路由和控制器实现。</p></div>
+          <div class="item"><span class="tag done">已完成</span><h3>风险闭环规格沉淀</h3><p>新增风险信息操作列规格，记录详情、指标全景、处置计划、风险确认/消除、情况描述等可见交互与接口契约。</p></div>
+          <div class="item"><span class="tag verify">已验证</span><h3>构建与页面运行</h3><p>前端 <code>tsc -b && vite build</code> 成功；浏览器已验证首页和风险信息页正常渲染，风险信息页显示筛选、750 条总数、分页和状态化操作入口。</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>运行界面证据</h2>
+      <div class="evidence">
+        <figure><img src="progress-assets/homepage-desktop-20260807.png" alt="本地系统首页截图" /><figcaption>图 1：本地首页（1440 × 900 截图）。可见导航、企业查询、风险等级和风险直达区域。</figcaption></figure>
+        <figure><img src="progress-assets/risk-module-desktop-20260807.png" alt="本地风险信息页截图" /><figcaption>图 2：本地风险信息工作台。可见分类导航、组合筛选、风险列表、状态化操作入口与分页。</figcaption></figure>
+        <figure><img src="progress-assets/enterprise-management-20260807.png" alt="本地企业管理页截图" /><figcaption>图 3：企业管理。可见新增企业入口、企业列表、编辑/删除操作与分页。</figcaption></figure>
+        <figure><img src="progress-assets/indicator-management-20260807.png" alt="本地指标管理页截图" /><figcaption>图 4：指标管理。可见新增指标入口、指标状态、风险级别设置与分页。</figcaption></figure>
+        <figure><img src="progress-assets/pending-review-20260807.png" alt="本地待审核页截图" /><figcaption>图 5：待审核（<code>#/sys/pendingReview</code>）。可见风险状态、风险等级变化、处置计划完成和动态调整审核入口。</figcaption></figure>
+        <figure><img src="progress-assets/risk-report-20260807.png" alt="本地风险报告页截图" /><figcaption>图 6：风险报告（<code>#/riskReport</code>）。可见季度报告筛选、报告列表和查看/编辑操作。</figcaption></figure>
+      </div>
+    </section>
+
+    <section>
+      <h2>下一步主要工作（预计 1 天）</h2>
+      <div class="two">
+        <div>
+          <h3><span class="tag doing">主任务</span> 风险监控状态化操作限制与流程验证</h3>
+          <ul>
+            <li>依据 <a href="核心风险处理.md">《核心风险处理开发说明》</a>，在“风险监控 → 风险信息”中按风险主状态与处置状态限制可用操作，避免越级操作或终态后仍可继续流转。</li>
+            <li>覆盖情况描述、风险确认、确认审核、处置计划、处置完成审核、风险消除及风险等级调整等节点；按钮可见性、弹窗提交和接口校验保持一致。</li>
+            <li>按状态矩阵逐项验证正向、驳回和终态分支，核验状态变化、操作日志及待审核入口是否正确。</li>
+          </ul>
+        </div>
+        <div>
+          <h3><span class="tag doing">配套核对</span> 数据库与接口边界</h3>
+          <ul>
+            <li>本项目约束要求不得修改既有 <code>test1.sqlite</code> 的结构或数据；后续应复核风险闭环相关实现，确保不在应用启动时创建扩展表或执行迁移。</li>
+            <li>需单独启动本地 API 并以导入数据库进行端到端接口回归，确认接口数据、操作提交与原系统可见行为一致。</li>
+            <li>需继续从原系统只读巡检并下载真实素材，建立本地来源映射，完成视觉验收闭环。</li>
+          </ul>
+        </div>
+      </div>
+      <p class="note"><strong>汇报说明：</strong>“已完成”指代码和/或页面结构已落地；“已验证”仅指本报告中明确列出的构建或浏览器运行验证。尚未完成全量页面、移动端和原系统像素级比对，因此不将当前状态表述为整体 1:1 完成。</p>
+    </section>
+    <footer>生成依据：今日文件时间戳、当前工作区源码、<code>npm run build</code> 输出与本地浏览器运行截图。</footer>
+  </main>
+</body>
+</html>
