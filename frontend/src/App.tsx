@@ -1,5 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import "./App.css";
+import "./risk-confirm.css";
+import "./risk-entry.css";
 
 const A = "/assets/";
 const nav = [
@@ -33,9 +35,11 @@ const risks = [
 function Header({
   active,
   setActive,
+  onLogout,
 }: {
   active: string;
   setActive: (v: string) => void;
+  onLogout: () => void;
 }) {
   const [open, setOpen] = useState(false);
   return (
@@ -74,12 +78,18 @@ function Header({
         {open && (
           <div className="dropdown">
             <button>▣　修改密码</button>
-            <button>↪　退出登录</button>
+            <button onClick={onLogout}>↪　退出登录</button>
           </div>
         )}
       </div>
     </header>
   );
+}
+function LoginPage({ onLogin }: { onLogin: () => void }) {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const submit = (event: FormEvent) => { event.preventDefault(); onLogin(); };
+  return <main className="login-page"><section className="login-panel"><h1>华企通穿透式监管平台</h1><h2>欢迎使用</h2><form onSubmit={submit}><label>用户名<input value={username} onChange={event => setUsername(event.target.value)} placeholder="请输入用户名" autoFocus /></label><label>密码<input value={password} onChange={event => setPassword(event.target.value)} type="password" placeholder="请输入密码" /></label><button type="submit">登录</button></form></section></main>;
 }
 
 function Home() {
@@ -371,6 +381,7 @@ function FilterBar({ label = "请输入企业名称" }: { label?: string }) {
 }
 type RiskRecord = {
   id: string;
+  image?: string;
   enterpriseName?: string;
   enterpriseGroup?: string;
   belongingPlateId?: string;
@@ -378,6 +389,7 @@ type RiskRecord = {
   riskContent?: string;
   riskLevel?: string;
   riskType?: string;
+  riskMainType?: string;
   riskTypeName?: string;
   operationStatus?: number;
   planStepState?: number | null;
@@ -386,6 +398,8 @@ type RiskRecord = {
   realName?: string | null;
   indicatorSource?: number | string | null;
   metricsAliasCode?: string | null;
+  creditCode?: string | null;
+  qccId?: string | null;
   shareholdingRatio?: string | null;
   investmentAmount?: string | null;
   fullName2?: string | null;
@@ -490,6 +504,7 @@ function RiskInfoView() {
   const [departmentNames, setDepartmentNames] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [enterpriseName, setEnterpriseName] = useState("");
+  const enterpriseSearchRef = useRef<HTMLInputElement>(null);
   const [level, setLevel] = useState<string[]>([]);
   const [enterpriseGroup, setEnterpriseGroup] = useState<string[]>([]);
   const [riskType, setRiskType] = useState<string[]>([]);
@@ -504,7 +519,8 @@ function RiskInfoView() {
   const [page, setPage] = useState(1);
   const [jump, setJump] = useState("1");
   const [actionModal, setActionModal] = useState<{ kind: RiskActionKind; row: RiskRecord } | null>(null);
-  const load = async (nextPage = page, groupOverride = enterpriseGroup) => {
+  const [entryOpen, setEntryOpen] = useState(false);
+  const load = async (nextPage = page, groupOverride = enterpriseGroup, enterpriseNameOverride = enterpriseName) => {
     setLoading(true);
     try {
       const login = await fetch("/api/login", {
@@ -522,8 +538,8 @@ function RiskInfoView() {
         pageNum: String(nextPage),
         pageSize: "10",
       });
-      if (enterpriseName.trim())
-        params.set("enterpriseName", enterpriseName.trim());
+      if (enterpriseNameOverride.trim())
+        params.set("enterpriseName", enterpriseNameOverride.trim());
       if (level.length) params.set("riskLevel", level.join(','));
       if (groupOverride.length) params.set("enterpriseGroup", groupOverride.join(','));
       if (riskType.length) params.set("riskType", riskType.join(','));
@@ -567,11 +583,12 @@ function RiskInfoView() {
   }, []);
   const reset = () => {
     setEnterpriseName("");
+    if (enterpriseSearchRef.current) enterpriseSearchRef.current.value = '';
     setLevel([]);
     setEnterpriseGroup([]); setRiskType([]); setOperationStatus([]); setDepartment([]); setManager([]); setSource([]); setStartDate(""); setEndDate("");
     setPage(1);
     setJump("1");
-    setTimeout(() => void load(1), 0);
+    setTimeout(() => void load(1, enterpriseGroup, ''), 0);
   };
   const exportRisks = async () => {
     try {
@@ -610,8 +627,8 @@ function RiskInfoView() {
         <div className="risk-filter">
           {monitorGroup !== '风险信息' && <div className="monitor-group-tabs">{monitorGroups.find(x => x.label === monitorGroup)?.tabs.map(item => <button key={item} className={groupTab === item ? 'active' : ''} onClick={() => { setGroupTab(item); void load(1, enterpriseGroup); }}>{item}</button>)}</div>}
           <input
-            value={enterpriseName}
-            onChange={(e) => setEnterpriseName(e.target.value)}
+            ref={enterpriseSearchRef}
+            defaultValue=""
             placeholder="请输入企业名称"
           />
           <PendingCascader placeholder="请选择企业分组" value={enterpriseGroup.map(code => Object.entries(enterpriseGroupCodes).find(([, value]) => value === code)?.[0] || code)} onChange={v => setEnterpriseGroup(v.map(label => enterpriseGroupCodes[label] || label))} items={[{ label: '全资企业', children: ['全资企业', '集团直管'] }, { label: '控股企业', children: ['控股企业', '控股不控权企业', '控股不控权关联企业', '控股企业其他股东'] }, { label: '参股企业', children: ['参股企业', '参股企业实际控制人', '参股企业关联企业'] }, { label: '主动管理型基金', children: ['主动管理型基金'] }, { label: '参与基金', children: ['参与基金'] }, { label: '集团本部', children: ['集团本部'] }]} />
@@ -622,7 +639,7 @@ function RiskInfoView() {
           <PendingCascader placeholder="请选择管理主体" value={manager.map(code => riskManagers[code] || code)} onChange={v => setManager(v.map(label => Object.entries(riskManagers).find(([, text]) => text === label)?.[0] || label))} items={Object.values(riskManagers).map(label => ({ label }))} />
           <PendingCascader placeholder="请选择风险来源" value={source.map(code => code === '0' ? '企查查' : code === '1' ? '运营平台' : code === '2' ? '金企通' : code)} onChange={v => setSource(v.map(label => label === '企查查' ? '0' : label === '运营平台' ? '1' : '2'))} items={['企查查', '运营平台', '金企通'].map(label => ({ label }))} />
           <div className="risk-date-range"><input value={startDate} onChange={e => setStartDate(e.target.value)} type="date" aria-label="开始日期" /><span>至</span><input value={endDate} onChange={e => setEndDate(e.target.value)} type="date" aria-label="结束日期" /></div>
-          <div className="risk-filter-actions"><button className="primary" onClick={() => void load(1)}>查询</button><button onClick={reset}>重置</button><button onClick={() => void exportRisks()}>⇩ 导出</button></div>
+          <div className="risk-filter-actions"><button onClick={() => setEntryOpen(true)}>＋ 新增</button><button className="primary" onClick={() => { const keyword = enterpriseSearchRef.current?.value || ''; setEnterpriseName(keyword); void load(1, enterpriseGroup, keyword); }}>查询</button><button onClick={reset}>重置</button><button onClick={() => void exportRisks()}>⇩ 导出</button></div>
         </div>
         <div className="risk-table-wrap">
           {loading && <div className="table-loading">拼命加载中，请稍后…</div>}
@@ -746,13 +763,79 @@ function RiskInfoView() {
               页
             </label>
         </footer>
-        {actionModal && <RiskActionDialog modal={actionModal} onClose={() => setActionModal(null)} onChanged={() => void load(page)} />}
+      {actionModal && <RiskActionDialog modal={actionModal} onClose={() => setActionModal(null)} onChanged={() => { void load(page); }} />}
+      {entryOpen && <RiskEntryDialog departmentNames={departmentNames} onClose={() => setEntryOpen(false)} onSave={() => { setEntryOpen(false); void load(1); }} />}
       </section>
     </main>
   );
 }
+type RiskIndicatorOption = {
+  id?: string;
+  indicatorName?: string;
+  indicatorCategory1?: string;
+  indicatorCategory2?: string;
+  riskLevel?: string | number;
+  manageDeptId?: string;
+};
+
+function RiskEntryDialog({ departmentNames, onClose, onSave }: { departmentNames: Record<string, string>; onClose: () => void; onSave: () => void }) {
+  const [form, setForm] = useState<Record<string, string>>({ riskLevel: '1', indicatorSource: '0', occurTime: new Date().toISOString().slice(0, 16) });
+  const [indicators, setIndicators] = useState<RiskIndicatorOption[]>([]);
+  const [indicatorLoading, setIndicatorLoading] = useState(true);
+  const [imageName, setImageName] = useState('');
+  const enterpriseInputRef = useRef<HTMLInputElement>(null);
+  const set = (key: string, value: string) => setForm(current => ({ ...current, [key]: value }));
+
+  useEffect(() => {
+    let active = true;
+    void (async () => {
+      try {
+        const token = await riskSessionToken();
+        const result = await fetch('/api/supervise/index/page?pageNum=1&pageSize=500', { headers: { Authorization: `Bearer ${token}`, token } }).then(response => response.json());
+        if (active && result.code === 0) setIndicators(Array.isArray(result.data?.list) ? result.data.list : []);
+      } finally {
+        if (active) setIndicatorLoading(false);
+      }
+    })();
+    return () => { active = false; };
+  }, []);
+
+  const selectIndicator = (indicatorId: string) => {
+    const indicator = indicators.find(item => String(item.id) === indicatorId);
+    if (!indicator) return;
+    setForm(current => ({
+      ...current,
+      indicatorId,
+      riskIndicator: indicator.indicatorName || '',
+      riskMainType: indicator.indicatorCategory1 || current.riskMainType || '',
+      riskType: indicator.indicatorCategory2 || current.riskType || '',
+      riskLevel: String(indicator.riskLevel ?? current.riskLevel ?? ''),
+      manageDeptId: indicator.manageDeptId || current.manageDeptId || '',
+    }));
+  };
+
+  const selectImage = (file?: File) => {
+    if (!file) return;
+    setImageName(file.name);
+    set('image', URL.createObjectURL(file));
+  };
+
+  const save = async () => {
+    const enterpriseName = enterpriseInputRef.current?.value.trim() || '';
+    if (!enterpriseName || !form.riskIndicator?.trim() || !form.riskContent?.trim() || !form.riskType || !form.enterpriseGroup) { window.alert('请完整填写必填项'); return; }
+    try {
+      const token = await riskSessionToken();
+      const result = await fetch('/api/supervise/risk/manual', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, token }, body: JSON.stringify({ ...form, enterpriseName, riskIndicator: form.riskIndicator.trim(), riskContent: form.riskContent.trim(), occurTime: form.occurTime?.replace('T', ' ') || '', operator: '管理员' }) }).then(response => response.json());
+      if (result.code !== 0) throw new Error(result.msg || '保存失败');
+      onSave();
+    } catch (error) { window.alert(error instanceof Error ? error.message : '保存失败'); }
+  };
+  const select = (label: string, key: string, options: Array<[string, string]>) => <label className="risk-entry-field"><span>{label}</span><select value={form[key] || ''} onChange={event => set(key, event.target.value)}><option value="">请选择</option>{options.map(([value, text]) => <option key={value} value={value}>{text}</option>)}</select></label>;
+  return <div className="dialog-mask risk-entry-mask" role="dialog" aria-modal="true" aria-label="新增风险信息"><section className="risk-entry-dialog"><button className="dialog-close" onClick={onClose}>×</button><h3>新增风险信息</h3><p className="risk-entry-hint">模拟企查查 / 运营平台风险数据；带 <b>*</b> 的字段为必填项。</p><div className="risk-entry-grid"><label className="risk-entry-field required"><span>企业名称</span><input ref={enterpriseInputRef} defaultValue="" placeholder="请输入企业名称" /></label>{select('企业分组', 'enterpriseGroup', Object.entries(enterpriseGroupCodes).map(([text, value]) => [value, text]))}{select('管理主体', 'belongingPlateId', Object.entries(riskManagers))}{select('主管部门', 'manageDeptId', Object.entries(departmentNames))}<label className="risk-entry-field required"><span>风险指标</span><select value={form.indicatorId || ''} onChange={event => selectIndicator(event.target.value)} disabled={indicatorLoading}><option value="">{indicatorLoading ? '加载指标中…' : '请选择指标管理中的指标'}</option>{indicators.map(item => <option key={item.id} value={item.id}>{item.indicatorName || '--'}</option>)}</select></label>{select('风险主类', 'riskMainType', [['supv_risk_cat_main', '主体资质与工商管控风险'], ['supv_risk_cat_stock', '股权穿透与股东管控风险'], ['supv_risk_cat_governance', '治理与人员管控风险'], ['supv_risk_cat_law', '法律与司法涉诉风险'], ['supv_risk_cat_business', '经营运营与资质合规风险'], ['supv_risk_cat_financial', '财务与资金管控风险']])}{select('风险类型', 'riskType', Object.entries(riskTypes))}{select('风险级别', 'riskLevel', Object.entries(riskLevels))}<label className="risk-entry-field"><span>风险状态</span><input className="risk-entry-readonly" value="未确认" readOnly /></label>{select('风险来源', 'indicatorSource', [['0', '企查查'], ['1', '运营平台'], ['2', '金企通']])}<label className="risk-entry-field"><span>发生日期</span><input type="datetime-local" value={form.occurTime || ''} onChange={event => set('occurTime', event.target.value)} /></label><label className="risk-entry-field"><span>持股比例</span><input value={form.shareholdingRatio || ''} onChange={event => set('shareholdingRatio', event.target.value)} placeholder="例如：0.55%" /></label><label className="risk-entry-field"><span>投资金额</span><input value={form.investmentAmount || ''} onChange={event => set('investmentAmount', event.target.value)} placeholder="请输入投资金额" /></label><label className="risk-entry-field"><span>企业信用代码</span><input value={form.creditCode || ''} onChange={event => set('creditCode', event.target.value)} placeholder="请输入统一社会信用代码" /></label><label className="risk-entry-field"><span>企查查 ID</span><input value={form.qccId || ''} onChange={event => set('qccId', event.target.value)} placeholder="请输入企查查 ID" /></label><label className="risk-entry-field"><span>指标别名编码</span><input value={form.metricsAliasCode || ''} onChange={event => set('metricsAliasCode', event.target.value)} placeholder="请输入指标别名编码" /></label><label className="risk-entry-field risk-entry-upload"><span>股权结构图</span><div><input type="file" accept="image/*" onChange={event => selectImage(event.target.files?.[0])} /><small>{imageName || '请选择图片附件'}</small>{form.image && <img src={form.image} alt="股权结构图预览" />}</div></label><label className="risk-entry-field risk-entry-content required"><span>风险内容</span><textarea value={form.riskContent || ''} onChange={event => set('riskContent', event.target.value)} placeholder="请输入风险内容" /></label></div><footer className="dialog-actions"><button className="primary" onClick={save}>保存</button><button onClick={onClose}>取消</button></footer></section></div>;
+}
 type RiskLog = { id?: string; operatorName?: string; operator?: string; operatorTime?: string; operatoCategory?: string; remark?: string; handleReason?: string };
-type PlanStep = { id?: string; step?: string; stepContent?: string; responsiblePersonName?: string; planFinishDate?: string; actualFinishDate?: string; state?: number; planTarget?: string; planDeadline?: string };
+type PlanStep = { id?: string; step?: string; stepContent?: string; responsiblePersonName?: string; planFinishDate?: string; actualFinishDate?: string; state?: number; planTarget?: string; planDeadline?: string; url?: string; urlName?: string };
+type PlanProgress = { id?: string; progressStepContent?: string; state?: number; createTime?: string };
 
 async function riskSessionToken() {
   const login = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ uuid: crypto.randomUUID(), username: 'admin', password: 'admin' }) }).then(response => response.json());
@@ -761,7 +844,7 @@ async function riskSessionToken() {
   return token as string;
 }
 
-function RiskActionDialog({ modal, onClose, onChanged }: { modal: { kind: RiskActionKind; row: RiskRecord }; onClose: () => void; onChanged: () => void }) {
+function RiskActionDialog({ modal, onClose, onChanged }: { modal: { kind: RiskActionKind; row: RiskRecord }; onClose: () => void; onChanged: (patch?: Partial<RiskRecord>) => void }) {
   const { kind, row } = modal;
   const [tab, setTab] = useState<'log' | 'plan'>('log');
   const [logs, setLogs] = useState<RiskLog[]>([]);
@@ -775,11 +858,12 @@ function RiskActionDialog({ modal, onClose, onChanged }: { modal: { kind: RiskAc
   const [reportOrNot, setReportOrNot] = useState(0);
   const [reportContent, setReportContent] = useState('');
   const [attachment, setAttachment] = useState<File | null>(null);
+  const [loaded, setLoaded] = useState(false);
   useEffect(() => {
     let active = true;
     const headers = (token: string) => ({ Authorization: `Bearer ${token}`, token });
     const read = async () => {
-      setBusy(true); setMessage('');
+      setBusy(true); setLoaded(false); setMessage('');
       try {
         const token = await riskSessionToken();
         const tasks: Promise<void>[] = [];
@@ -788,7 +872,7 @@ function RiskActionDialog({ modal, onClose, onChanged }: { modal: { kind: RiskAc
         if (kind === 'panorama') tasks.push(fetch(`/api/supervise/risk/page?pageNum=1&pageSize=30&enterpriseName=${encodeURIComponent(row.enterpriseName || '')}`, { headers: headers(token) }).then(response => response.json()).then(data => { if (active && data.code === 0) setPanorama(data.data?.list || []); }));
         await Promise.all(tasks);
       } catch (error) { if (active) setMessage(error instanceof Error ? error.message : '读取失败'); }
-      finally { if (active) setBusy(false); }
+      finally { if (active) { setBusy(false); setLoaded(true); } }
     };
     void read();
     return () => { active = false; };
@@ -797,6 +881,16 @@ function RiskActionDialog({ modal, onClose, onChanged }: { modal: { kind: RiskAc
     if ((kind === 'confirm' && confirmRisk === 0 && !reason.trim()) || ((kind === 'eliminate' || kind === 'situation') && !reason.trim())) { setMessage('请填写发生原因'); return; }
     setBusy(true); setMessage('');
     try {
+      if (row.id.startsWith('qcc-')) {
+        const patch: Partial<RiskRecord> = kind === 'confirm'
+          ? { operationStatus: confirmRisk === 1 ? 4 : 5 }
+          : kind === 'eliminate'
+            ? { operationStatus: 6 }
+            : { operationStatus: 7 };
+        onChanged(patch);
+        onClose();
+        return;
+      }
       const token = await riskSessionToken();
       const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, token };
       let url = ''; let body: Record<string, unknown> = {};
@@ -811,8 +905,9 @@ function RiskActionDialog({ modal, onClose, onChanged }: { modal: { kind: RiskAc
   };
   const title: Record<RiskActionKind, string> = { detail: '风险详情', panorama: '指标全景', plan: '处置计划', confirm: '风险确认', eliminate: '风险消除', situation: '情况描述' };
   const status = riskStates[row.operationStatus ?? -1] || '--';
+  if (kind === 'plan' && loaded && steps.length === 0) return <div className="dialog-mask risk-action-mask" role="dialog" aria-modal="true" aria-label="制定处置计划"><DisposalPlanDialog row={row} steps={steps} standalone onClose={onClose} onSaved={onChanged} /></div>;
   return <div className="dialog-mask risk-action-mask" role="dialog" aria-modal="true" aria-label={title[kind]}>
-    <div className={`risk-action-dialog ${kind === 'panorama' ? 'panorama-dialog' : ''} ${kind === 'plan' ? 'disposal-plan-dialog' : ''}`}>
+    <div className={`risk-action-dialog ${kind === 'panorama' ? 'panorama-dialog' : ''} ${kind === 'plan' ? 'disposal-plan-dialog' : ''} ${kind === 'confirm' ? 'confirm-dialog' : ''}`}>
       <button className="dialog-close" onClick={onClose}>×</button><h3>{title[kind]}</h3>
       {busy && <div className="risk-action-loading">加载中…</div>}
       {message && <p className="risk-action-message">{message}</p>}
@@ -822,8 +917,8 @@ function RiskActionDialog({ modal, onClose, onChanged }: { modal: { kind: RiskAc
         {tab === 'log' ? <RiskLogTable rows={logs} /> : <PlanStepTable rows={steps} />}
       </>}
       {kind === 'panorama' && <table className="panorama-table"><thead><tr><th>序号</th><th>企业名称</th><th>风险指标</th><th>风险内容</th><th>风险级别</th><th>风险类型</th><th>企业分组</th><th>管理主体</th><th>发生日期</th></tr></thead><tbody>{panorama.map((item, index) => <tr key={item.id}><td>{index + 1}</td><td>{item.enterpriseName}</td><td>{item.riskIndicator}</td><td>{item.riskContent}</td><td>{riskLevels[item.riskLevel || ''] || '--'}</td><td>{riskTypes[item.riskType || ''] || item.riskType}</td><td>{riskGroups[item.enterpriseGroup || ''] || item.enterpriseGroup}</td><td>{riskManagers[item.belongingPlateId || ''] || item.belongingPlateId}</td><td>{item.occurTime}</td></tr>)}</tbody></table>}
-      {kind === 'plan' && <DisposalPlanDialog row={row} steps={steps} />}
-      {kind === 'confirm' && <div className="risk-form"><label>是否为风险</label><div><label><input type="radio" checked={confirmRisk === 1} onChange={() => setConfirmRisk(1)} /> 是风险</label><label><input type="radio" checked={confirmRisk === 0} onChange={() => setConfirmRisk(0)} /> 不是风险</label></div><label>发生原因</label><textarea value={reason} onChange={event => setReason(event.target.value)} placeholder="补充说明" rows={6} /><label>决策机构</label><textarea value={policyMaking} onChange={event => setPolicyMaking(event.target.value)} placeholder="请输入决策机构和会议类型" rows={4} /><label>上传附件</label><input type="file" onChange={event => setAttachment(event.target.files?.[0] || null)} /></div>}
+      {kind === 'plan' && <DisposalPlanDialog row={row} steps={steps} onSaved={onChanged} />}
+      {kind === 'confirm' && <div className="risk-form confirm-form"><label>是否为风险</label><div><label><input type="radio" checked={confirmRisk === 1} onChange={() => setConfirmRisk(1)} /> 是风险</label><label><input type="radio" checked={confirmRisk === 0} onChange={() => setConfirmRisk(0)} /> 不是风险</label></div><label>发生原因</label><textarea value={reason} onChange={event => setReason(event.target.value)} placeholder="补充说明" rows={6} /></div>}
       {kind === 'eliminate' && <div className="risk-form"><label>原因</label><textarea value={reason} onChange={event => setReason(event.target.value)} placeholder="请输入理由" rows={4} /></div>}
       {kind === 'situation' && <div className="risk-form"><label>发生原因</label><textarea value={reason} onChange={event => setReason(event.target.value)} placeholder="请输入发生原因" rows={6} /><label>决策机构</label><textarea value={policyMaking} onChange={event => setPolicyMaking(event.target.value)} placeholder="请输入决策机构和会议类型" rows={6} /><label>上传附件</label><input type="file" onChange={event => setAttachment(event.target.files?.[0] || null)} /><label>是否报备集团</label><div><label><input type="radio" checked={reportOrNot === 1} onChange={() => setReportOrNot(1)} /> 是</label><label><input type="radio" checked={reportOrNot === 0} onChange={() => setReportOrNot(0)} /> 否</label></div>{reportOrNot === 1 && <><label>报备内容</label><textarea value={reportContent} onChange={event => setReportContent(event.target.value)} placeholder="请输入报备内容" rows={3} /></>}</div>}
       {(kind === 'confirm' || kind === 'eliminate' || kind === 'situation') && <div className="dialog-actions"><button className="primary" disabled={busy} onClick={() => void submit()}>提交</button><button onClick={onClose}>取消</button></div>}
@@ -832,19 +927,98 @@ function RiskActionDialog({ modal, onClose, onChanged }: { modal: { kind: RiskAc
   </div>;
 }
 
-function DisposalPlanDialog({ row, steps }: { row: RiskRecord; steps: PlanStep[] }) {
-  const step = steps[0];
-  const completeCount = steps.filter(item => item.state === 2).length;
-  const total = steps.length;
+function DisposalPlanDialog({ row, steps, standalone = false, onClose, onSaved }: { row: RiskRecord; steps: PlanStep[]; standalone?: boolean; onClose?: () => void; onSaved?: () => void }) {
+  const [planSteps, setPlanSteps] = useState<PlanStep[]>(() => steps.length ? steps : [{ id: `local-${Date.now()}`, step: '1', stepContent: '', planFinishDate: '', state: 0 }]);
+  const [progressStep, setProgressStep] = useState<PlanStep | null>(null);
+  const [progressRows, setProgressRows] = useState<PlanProgress[]>([]);
+  const [updateStep, setUpdateStep] = useState<PlanStep | null>(null);
+  const [progressContent, setProgressContent] = useState('');
+  const [progressComplete, setProgressComplete] = useState(false);
+  const [progressSaving, setProgressSaving] = useState(false);
+  const [editingPlan, setEditingPlan] = useState(() => steps.length === 0);
+  const [target, setTarget] = useState('');
+  const [deadlineInput, setDeadlineInput] = useState('');
+  const [notice, setNotice] = useState('');
+  const [uploadStepId, setUploadStepId] = useState<string | undefined>();
+  const uploadInputRef = useRef<HTMLInputElement>(null);
+  const [planSaved, setPlanSaved] = useState(steps.length > 0);
+  useEffect(() => { if (steps.length > 0) { setPlanSteps(steps); setTarget(steps[0]?.planTarget || ''); setDeadlineInput((steps[0]?.planDeadline || steps[0]?.planFinishDate || '').slice(0, 10)); setPlanSaved(true); setEditingPlan(false); } }, [steps]);
+  const step = planSteps[0];
+  const completeCount = planSteps.filter(item => item.state === 2 || item.state === 3 || item.state === 4).length;
+  const total = planSteps.length;
   const deadline = step?.planDeadline || step?.planFinishDate;
+  const hasPlan = planSaved;
+  const openProgress = async (item: PlanStep) => {
+    setProgressStep(item); setProgressRows([]); setNotice('');
+    try { const token = await riskSessionToken(); const data = await fetch(`/api/supervise/disposal-steps/${encodeURIComponent(item.id || '')}/progress`, { headers: { Authorization: `Bearer ${token}`, token } }).then(response => response.json()); if (data.code === 0) setProgressRows(Array.isArray(data.data) ? data.data : []); else setNotice(data.msg || '读取进度失败'); } catch { setNotice('读取进度失败'); }
+  };
+  const saveProgress = async () => {
+    if (!updateStep || !progressContent.trim()) { setNotice('请填写相关进度内容'); return; }
+    if (!updateStep.id || updateStep.id.startsWith('local-')) { setNotice('请先保存处置计划，再维护执行进度'); return; }
+    setProgressSaving(true); setNotice('');
+    try {
+      const token = await riskSessionToken();
+      const result = await fetch(`/api/supervise/disposal-steps/${encodeURIComponent(updateStep.id)}/progress`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, token },
+        body: JSON.stringify({ content: progressContent.trim(), completed: progressComplete, operator: '管理员' }),
+      }).then(response => response.json());
+      if (result.code !== 0) throw new Error(result.msg || '进度保存失败');
+      const allStepsCompleted = progressComplete && planSteps.every(item => item.id === updateStep.id || item.state === 2 || item.state === 3 || item.state === 4);
+      let completionSubmitted = false;
+      if (allStepsCompleted) {
+        const completion = await fetch(`/api/supervise/risk/${encodeURIComponent(row.id)}/disposal-complete`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, token },
+          body: JSON.stringify({ operator: '管理员' }),
+        }).then(response => response.json());
+        if (completion.code !== 0) throw new Error(completion.msg || '处置步骤已完成，但自动提交完成审核失败');
+        completionSubmitted = true;
+      }
+      const entry = { progressStepContent: progressContent.trim(), state: progressComplete ? 1 : 0, createTime: new Date().toLocaleString('sv-SE') };
+      if (progressStep?.id === updateStep.id) setProgressRows(rows => [...rows, entry]);
+      setPlanSteps(items => items.map(item => item.id === updateStep.id ? { ...item, state: progressComplete ? 2 : 1, actualFinishDate: progressComplete ? new Date().toLocaleDateString('sv-SE') : item.actualFinishDate } : item));
+      setUpdateStep(null); setProgressContent(''); setNotice(completionSubmitted ? '全部步骤已完成，已自动提交处置完成审核' : progressComplete ? '完成进度已保存' : '执行进度已保存'); onSaved?.();
+    } catch (error) { setNotice(error instanceof Error ? error.message : '进度保存失败'); }
+    finally { setProgressSaving(false); }
+  };
+  const savePlan = async () => {
+    if (!target.trim() || !deadlineInput || !planSteps.length || planSteps.some(item => !item.stepContent?.trim() || !item.planFinishDate)) { setNotice('请填写计划目标、截止日期和至少一个完整步骤'); return; }
+    setNotice('正在保存处置计划…');
+    try {
+      const token = await riskSessionToken();
+      const result = await fetch(`/api/supervise/risk/${encodeURIComponent(row.id)}/disposal-plans`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, token },
+        body: JSON.stringify({ target: target.trim(), deadline: deadlineInput, operator: '管理员', steps: planSteps.map(item => ({ content: item.stepContent?.trim(), plannedAt: item.planFinishDate, responsiblePerson: item.responsiblePersonName || '', responsibleDepartment: '', responsibleDepartmentId: '', attachments: item.url || '', attachmentName: item.urlName || '' })) }),
+      }).then(response => response.json());
+      if (result.code !== 0) throw new Error(result.msg || '处置计划保存失败');
+      setPlanSteps(items => items.map((item, index) => ({ ...item, step: String(index + 1), planTarget: target.trim(), planDeadline: deadlineInput })));
+      setPlanSaved(true); setEditingPlan(false); setNotice(hasPlan ? '处置计划已更新' : '处置计划已制定'); onSaved?.(); if (standalone) onClose?.();
+    } catch (error) { setNotice(error instanceof Error ? error.message : '处置计划保存失败'); }
+  };
+  const uploadAttachment = (file: File | undefined) => {
+    if (!file || !uploadStepId) return;
+    const url = URL.createObjectURL(file);
+    setPlanSteps(items => items.map(item => item.id === uploadStepId ? { ...item, url, urlName: file.name } : item));
+    setNotice(`已添加附件：${file.name}`); setUploadStepId(undefined);
+  };
+  if (standalone) return <div className="plan-subdialog edit-plan create-plan-dialog"><button className="dialog-close" onClick={onClose}>×</button><h3>制定处置计划</h3>{notice && <p className="plan-notice">{notice}</p>}<p><b>主责企业：</b>{row.enterpriseName || '--'}</p><h4 className="plan-risk-title">风险内容</h4><div className="plan-risk-content">{row.riskContent || '--'}</div><label>计划总目标<textarea value={target} onChange={event => setTarget(event.target.value)} placeholder="请输入计划总目标" /></label><label>计划截止日期<input type="date" value={deadlineInput} onChange={event => setDeadlineInput(event.target.value)} /></label><table className="action-data-table"><thead><tr><th>步骤</th><th>内容</th><th>计划完成时间</th><th>操作</th></tr></thead><tbody>{planSteps.map((item, index) => <tr key={item.id || index}><td>{index + 1}</td><td><input value={item.stepContent || ''} placeholder="请输入内容" onChange={event => setPlanSteps(items => items.map((x, i) => i === index ? { ...x, stepContent: event.target.value } : x))} /></td><td><input type="date" value={(item.planFinishDate || '').slice(0, 10)} onChange={event => setPlanSteps(items => items.map((x, i) => i === index ? { ...x, planFinishDate: event.target.value } : x))} /></td><td><button className="text-danger" onClick={() => setPlanSteps(items => items.filter((_, i) => i !== index))}>删除</button></td></tr>)}</tbody></table><button className="add-step" onClick={() => setPlanSteps(items => [...items, { id: `local-${Date.now()}`, step: String(items.length + 1), stepContent: '', planFinishDate: deadlineInput, state: 0 }])}>⊕ 添加步骤</button><div className="dialog-actions"><button className="primary" onClick={() => void savePlan()}>保存</button><button onClick={onClose}>取消</button></div></div>;
   return <section className="disposal-plan-content">
-    <div className="disposal-completion-banner"><span>申请完成状态：</span><b><i>✓</i>全部完成</b><span>申请完成：{completeCount} 步 / 共 {total} 步</span></div>
+    {notice && <p className="plan-notice">{notice}</p>}
+    {!hasPlan && <div className="plan-empty-state">尚未制定处置计划，正在打开“制定处置计划”窗口。</div>}
+    {hasPlan && <><div className="disposal-completion-banner"><span>申请完成状态：</span><b><i>✓</i>{completeCount === total ? '全部完成' : '进行中'}</b><span>申请完成：{completeCount} 步 / 共 {total} 步</span></div>
     <div className="disposal-target-card">
       <div className="disposal-target-main"><div className="disposal-target-heading"><i>◎</i><b>总目标</b></div><p>{step?.planTarget || '--'}</p><small>主责企业：{row.enterpriseName || '--'}<em>|</em>计划完成时间：{deadline ? deadline.slice(0, 10) : '--'}</small></div>
-      <button type="button" className="disposal-edit">♢ <span>修改处置计划</span></button>
+      <button type="button" className="disposal-edit" onClick={() => setEditingPlan(true)}>♢ <span>修改处置计划</span></button>
     </div>
-    <table className="disposal-step-table"><thead><tr><th>步骤</th><th>内容</th><th>责任人</th><th>计划完成时间</th><th>实际完成时间</th><th>状态</th><th>操作</th></tr></thead><tbody>{steps.length ? steps.map((item, index) => <tr key={item.id || index}><td>{item.step || index + 1}</td><td>{item.stepContent || '--'}</td><td>{item.responsiblePersonName || '--'}</td><td>{item.planFinishDate ? item.planFinishDate.slice(0, 10) : '--'}</td><td>{item.actualFinishDate ? item.actualFinishDate.slice(0, 10) : '--'}</td><td><span className={`plan-state plan-state-${item.state ?? -1}`}>{item.state === 2 ? '申请完成' : planStepStates[item.state ?? -1]?.label || '--'}</span></td><td><button type="button">查看</button><button type="button" className="plan-download">↓</button><button type="button" className="plan-upload">↑</button></td></tr>) : <tr><td colSpan={7}>暂无数据</td></tr>}</tbody></table>
+    <table className="disposal-step-table"><thead><tr><th>步骤</th><th>内容</th><th>责任人</th><th>计划完成时间</th><th>实际完成时间</th><th>状态</th><th>操作</th></tr></thead><tbody>{planSteps.map((item, index) => <tr key={item.id || index}><td>{item.step || index + 1}</td><td>{item.stepContent || '--'}</td><td>{item.responsiblePersonName || '--'}</td><td>{item.planFinishDate ? item.planFinishDate.slice(0, 10) : '--'}</td><td>{item.actualFinishDate ? item.actualFinishDate.slice(0, 10) : '--'}</td><td><span className={`plan-state plan-state-${item.state ?? -1}`}>{item.state === 2 ? '申请完成' : planStepStates[item.state ?? -1]?.label || '--'}</span></td><td>{item.state === 0 ? <button type="button" onClick={() => { setUpdateStep(item); setProgressContent(''); setProgressComplete(false); }}>开始执行</button> : <><button type="button" onClick={() => void openProgress(item)}>查看</button>{item.state === 1 && <button type="button" onClick={() => { setUpdateStep(item); setProgressContent(''); setProgressComplete(false); }}>更新进度</button>}</>} {item.url && <button type="button" className="plan-download" title={item.urlName || '下载附件'} onClick={() => window.open(item.url, '_blank', 'noopener,noreferrer')}>↓</button>}<button type="button" className="plan-upload" title="上传附件" onClick={() => { setUploadStepId(item.id); uploadInputRef.current?.click(); }}>↑</button></td></tr>)}</tbody></table>
     <footer className="disposal-plan-pager"><span>共 {total} 条</span><button type="button">10条/页 <i>⌄</i></button><button type="button" disabled>‹</button><b>1</b><button type="button" disabled>›</button><span>前往</span><input value="1" readOnly aria-label="前往页码" /><span>页</span></footer>
+    </>}
+    <input ref={uploadInputRef} className="plan-file-input" type="file" onChange={event => uploadAttachment(event.target.files?.[0])} />
+    {progressStep && <div className="plan-layer"><div className="plan-subdialog progress-view"><button className="dialog-close" onClick={() => setProgressStep(null)}>×</button><h3>查看计划进度</h3><div className="progress-current"><b>▣ 当前计划步骤</b><p>{progressStep.stepContent || '--'}</p><small>负责人：{progressStep.responsiblePersonName || '--'}　计划完成时间：{(progressStep.planFinishDate || '--').slice(0, 10)}</small></div><table className="action-data-table"><thead><tr><th>序号</th><th>内容</th><th>状态</th><th>时间</th><th>操作</th></tr></thead><tbody>{progressRows.length ? progressRows.map((item, index) => <tr key={item.id || index}><td>{index + 1}</td><td>{item.progressStepContent || '--'}</td><td><span className={`plan-state plan-state-${item.state === 1 ? 2 : 1}`}>{item.state === 1 ? '申请完成' : '进行中'}</span></td><td>{item.createTime || '--'}</td><td><button className="text-danger" onClick={() => setProgressRows(rows => rows.filter((_, i) => i !== index))}>删除</button></td></tr>) : <tr><td colSpan={5}>暂无数据</td></tr>}</tbody></table><div className="dialog-actions"><button onClick={() => { setUpdateStep(progressStep); setProgressContent(''); setProgressComplete(false); }}>⟳ 更新进度</button></div></div></div>}
+    {updateStep && <div className="plan-layer"><div className="plan-subdialog update-progress"><button className="dialog-close" disabled={progressSaving} onClick={() => setUpdateStep(null)}>×</button><h3>更新进度</h3><label>状态 <input type="radio" checked={!progressComplete} onChange={() => setProgressComplete(false)} /> 进行中　<input type="radio" checked={progressComplete} onChange={() => setProgressComplete(true)} /> 申请完成</label><label>内容<textarea value={progressContent} onChange={event => setProgressContent(event.target.value)} placeholder="请输入相关进度内容" /></label><div className="dialog-actions"><button className="primary" disabled={progressSaving} onClick={() => void saveProgress()}>{progressSaving ? '保存中…' : '保存'}</button><button disabled={progressSaving} onClick={() => setUpdateStep(null)}>取消</button></div></div></div>}
+    {editingPlan && <div className="plan-layer"><div className="plan-subdialog edit-plan"><button className="dialog-close" onClick={() => setEditingPlan(false)}>×</button><h3>{hasPlan ? '修改处置计划' : '制定处置计划'}</h3><p><b>主责企业：</b>{row.enterpriseName || '--'}</p><label>计划总目标<textarea value={target} onChange={event => setTarget(event.target.value)} /></label><label>计划截止日期<input type="date" value={deadlineInput} onChange={event => setDeadlineInput(event.target.value)} /></label><table className="action-data-table"><thead><tr><th>步骤</th><th>内容</th><th>计划完成时间</th><th>操作</th></tr></thead><tbody>{planSteps.map((item, index) => <tr key={item.id || index}><td>{index + 1}</td><td><input value={item.stepContent || ''} onChange={event => setPlanSteps(items => items.map((x, i) => i === index ? { ...x, stepContent: event.target.value } : x))} /></td><td><input type="date" value={(item.planFinishDate || '').slice(0, 10)} onChange={event => setPlanSteps(items => items.map((x, i) => i === index ? { ...x, planFinishDate: event.target.value } : x))} /></td><td><button className="text-danger" onClick={() => setPlanSteps(items => items.filter((_, i) => i !== index))}>删除</button></td></tr>)}</tbody></table><button className="add-step" onClick={() => setPlanSteps(items => [...items, { id: `local-${Date.now()}`, step: String(items.length + 1), stepContent: '', planFinishDate: deadlineInput, state: 0 }])}>⊕ 添加步骤</button><div className="dialog-actions"><button className="primary" onClick={() => void savePlan()}>{hasPlan ? '修改' : '保存'}</button><button onClick={() => setEditingPlan(false)}>取消</button></div></div></div>}
   </section>;
 }
 
@@ -1979,6 +2153,7 @@ export default function App() {
   const readRoute = () => routes[window.location.hash] || "首页";
   const [active, setActive] = useState(readRoute);
   const [hash, setHash] = useState(window.location.hash);
+  const [loggedIn, setLoggedIn] = useState(() => window.location.hash !== '#/login' && localStorage.getItem('risk-monitor-logged-in') === '1');
   useEffect(() => {
     const onChange = () => {
       setActive(readRoute());
@@ -1990,9 +2165,12 @@ export default function App() {
   const navigate = (name: string) => {
     window.location.hash = routeFor[name];
   };
+  const login = () => { localStorage.setItem('risk-monitor-logged-in', '1'); setLoggedIn(true); window.location.hash = '#/index'; };
+  const logout = () => { localStorage.removeItem('risk-monitor-logged-in'); setLoggedIn(false); window.location.hash = '#/login'; };
+  if (!loggedIn) return <LoginPage onLogin={login} />;
   return (
     <>
-      <Header active={active} setActive={navigate} />
+      <Header active={active} setActive={navigate} onLogout={logout} />
       {active === "首页" ? (
         <Home />
       ) : active === "股权结构" ? (

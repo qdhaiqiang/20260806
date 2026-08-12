@@ -34,6 +34,27 @@
     (do (log! ds risk-id category remark who {:decision-content (str "状态 " allowed " -> " next)}) true)
     false))
 
+(defn create-manual-risk! [datasource risk]
+  "Persist a manually entered, already-mapped risk in the imported risk table."
+  (if (some #(str/blank? (str (get risk %)))
+            [:enterprise_name :risk_indicator :risk_content :risk_type :enterprise_group])
+    (error "请填写企业、指标、风险内容、风险类型和企业分组")
+    (let [risk-id (entity-id)]
+      (db/transaction! datasource
+                       (fn [tx]
+                         (db/create-manual-risk!
+                          tx
+                          (merge {:id risk-id
+                                  :image nil :metrics_name nil :risk_main_type nil
+                                  :risk_level "1" :occur_time (str (java.time.LocalDateTime/now))
+                                  :dept_id nil :metrics_alias_code nil :qcc_id nil :credit_code nil
+                                  :belonging_plate_id nil :shareholding_ratio nil :investment_amount nil
+                                  :indicator_source 0}
+                                 risk))
+                         (log! tx risk-id "RISK_CREATED" "已新增按指标映射的风险数据" (operator risk))
+                         (todo! tx "CONFIRMATION" risk-id (:dept_id risk))
+                         (success {:riskId (str risk-id) :operationStatus unconfirmed}))))))
+
 (defn initialize-description! [datasource risk-id due-at]
   "将已按指标映射生成的二级企业风险置为情况描述待办。"
   (db/transaction! datasource

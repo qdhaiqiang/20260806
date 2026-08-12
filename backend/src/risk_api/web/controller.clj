@@ -278,6 +278,33 @@
     {:status 200 :headers {"Content-Type" "text/csv; charset=utf-8" "Content-Disposition" "attachment; filename=risks.csv"}
      :body (str "\uFEFFid,enterpriseName,riskIndicator,riskContent,riskLevel,riskType,occurTime\n" (str/join "\n" (map line rows)))}))
 
+(defn manual-risk
+  "新增一条已完成指标映射的真实风险数据。"
+  [datasource request]
+  (let [body (:body-params request)]
+    (response
+     (workflow/create-manual-risk!
+      datasource
+      {:enterprise_name (body-value body "enterpriseName")
+       :enterprise_group (body-value body "enterpriseGroup")
+       :belonging_plate_id (body-value body "belongingPlateId")
+       :dept_id (body-value body "manageDeptId")
+       :risk_indicator (body-value body "riskIndicator")
+       :risk_content (body-value body "riskContent")
+       :risk_level (body-value body "riskLevel")
+       :risk_main_type (body-value body "riskMainType")
+       :risk_type (body-value body "riskType")
+       :indicator_source (integer-value (body-value body "indicatorSource") 0)
+       :occur_time (body-value body "occurTime")
+       :shareholding_ratio (body-value body "shareholdingRatio")
+       :investment_amount (body-value body "investmentAmount")
+       :metrics_alias_code (body-value body "metricsAliasCode")
+       :credit_code (body-value body "creditCode")
+       :qcc_id (body-value body "qccId")
+       :image (body-value body "image")
+       :metrics_name (body-value body "metricsName")
+       :operator (or (body-value body "operator") "管理员")}))))
+
 (defn description
   "提交风险情况描述。"
   [datasource request]
@@ -309,6 +336,12 @@
   (response (workflow/process-persisted-dynamics! datasource (:body-params request))))
 (defn timeout-descriptions [datasource request]
   (response (workflow/timeout-descriptions! datasource (:body-params request))))
+(defn disposal-progress-page
+  "读取既有处置步骤的进度记录。"
+  [datasource request]
+  (response {:code 0 :msg "success"
+             :data (db/list-progresses datasource {:step_id (get-in request [:path-params :id])})}))
+
 (defn disposal-progress [datasource request]
   (response (workflow/submit-progress! datasource (get-in request [:path-params :id]) (:body-params request))))
 (defn disposal-complete [datasource request]

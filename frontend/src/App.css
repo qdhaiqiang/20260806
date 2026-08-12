@@ -1,4 +1,5 @@
 .cascade-menu button i{font-size:0;line-height:10px;text-align:center;font-style:normal}.cascade-menu button i.checked{border-color:#409eff;background:#409eff;color:#fff;font-size:9px}
+.plan-notice{margin:0 0 10px;color:#409eff;font-size:13px}.plan-empty-state{padding:24px;color:#909399;text-align:center}.plan-file-input{display:none}.plan-layer{position:fixed;z-index:130;inset:0;display:flex;align-items:center;justify-content:center;background:#0008}.plan-subdialog{position:relative;width:min(1080px,76vw);max-height:78vh;overflow:auto;border-radius:4px;background:#fff;padding:24px;box-shadow:0 8px 26px #0003;color:#303133}.plan-subdialog h3{margin:0 0 18px;font-size:18px;font-weight:500}.plan-subdialog .dialog-close{position:absolute;right:17px;top:13px;border:0;background:transparent;color:#909399;font-size:23px}.progress-current{margin-bottom:20px;padding:16px 20px;border-radius:6px;background:#f5f7fa}.progress-current b{color:#303133}.progress-current p{margin:8px 0}.progress-current small{color:#909399}.progress-view .dialog-actions{justify-content:flex-end}.update-progress{width:420px}.update-progress>label,.edit-plan>label{display:block;margin:14px 0;color:#303133}.update-progress textarea,.edit-plan textarea{display:block;box-sizing:border-box;width:100%;min-height:92px;margin-top:8px;padding:9px;border:1px solid #dcdfe6;border-radius:4px;font:inherit}.edit-plan{width:min(1080px,76vw)}.edit-plan>p{margin:0 0 16px}.edit-plan input{box-sizing:border-box;height:32px;border:1px solid #dcdfe6;border-radius:4px;padding:0 8px;font:inherit}.edit-plan .action-data-table input{width:100%}.text-danger{border:0!important;background:transparent!important;color:#f56c6c!important;cursor:pointer}.add-step{margin-top:14px;border:0;background:transparent;color:#409eff;font-size:14px;cursor:pointer}
 .pending-cascader{min-width:0}.pending-cascader>button{display:flex!important;align-items:center;gap:8px;min-width:0}.pending-cascader>button .pending-cascader-label{display:block;flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transform:none!important}.pending-cascader>button .pending-cascader-arrow{display:block;float:none!important;flex:0 0 auto;transform:none!important}
 .review-filter{display:flex;align-items:center;gap:12px;height:53px;box-sizing:border-box;padding:12px 0}
 .review-filter>.pending-cascader{display:block;flex:0 0 154px;width:154px;min-width:154px}
@@ -22,6 +23,7 @@
   z-index: 2;
   white-space: nowrap;
 }
+.login-page{min-height:100vh;display:flex;align-items:center;justify-content:flex-end;box-sizing:border-box;padding-right:9.3vw;background:radial-gradient(circle at 63% 37%,#d8eaff 0 12%,transparent 31%),linear-gradient(145deg,#fbfdff 5%,#e5f0ff 46%,#b4dbff 100%);position:relative;overflow:hidden}.login-page:before,.login-page:after{content:"";position:absolute;left:-8vw;bottom:-17vh;width:77vw;height:54vh;border:2px solid #c5dcff;background:#f9fcffb8;transform:rotate(-23deg) skewX(-14deg);box-shadow:0 0 32px #fff inset}.login-page:after{left:21vw;bottom:-30vh;width:54vw;height:49vh;background:#eef6ff99;transform:rotate(-23deg) skewX(-14deg)}.login-panel{position:relative;z-index:1;box-sizing:border-box;width:664px;min-height:676px;padding:68px 80px;border:2px solid #fff;border-radius:26px;background:#edf4ffcf;box-shadow:0 24px 50px #8eb4e04d;color:#202635}.login-panel h1{margin:0 0 54px;font-size:47px;line-height:1.2;font-weight:700;letter-spacing:1px}.login-panel h2{margin:0 0 35px;font-size:28px}.login-panel form{display:grid;gap:27px}.login-panel label{display:grid;gap:14px;font-size:18px;font-weight:600}.login-panel input{height:63px;box-sizing:border-box;border:0;border-radius:14px;background:#fff;padding:0 22px;color:#253044;font-size:17px;outline:none;box-shadow:0 9px 22px #92a8c11a}.login-panel input:focus{box-shadow:0 0 0 3px #3a96ff33}.login-panel button{height:73px;margin-top:20px;border:0;border-radius:14px;background:#368df5;color:#fff;font-size:20px;font-weight:600;cursor:pointer;box-shadow:0 14px 27px #2d8df566}.login-panel button:hover{background:#207eee}@media(max-width:900px){.login-page{justify-content:center;padding:24px}.login-panel{width:min(100%,560px);min-height:0;padding:45px 38px}.login-panel h1{font-size:34px}.login-page:before,.login-page:after{opacity:.45}}
 .brand,
 .tools,
 .menus,
@@ -1489,8 +1491,12 @@
 }
 .bell {
   display: block;
+  flex: 0 0 21px;
   width: 21px;
   height: 21px;
+  background-image: url("/assets/tixing-CY-31xhX.png");
+  background-position: center;
+  background-size: 21px 21px;
   background-repeat: no-repeat;
 }
 .statistics-side {

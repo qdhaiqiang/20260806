@@ -25,6 +25,7 @@ function apiState(state: State) {
 
 test.beforeEach(async ({ page }) => {
   const state: State = { description: false, confirmation: false, elimination: false, requests: [] }
+  await page.addInitScript(() => localStorage.setItem('risk-monitor-logged-in', '1'))
   await page.route('**/api/**', apiState(state))
   await page.goto('/#/riskMonitor/info')
   await expect(page.getByText('页面测试-情况描述')).toBeVisible()
@@ -99,4 +100,36 @@ test('详情与取消：弹窗展示风险内容和操作记录，取消不提�
   await row.locator('a', { hasText: '情况描述' }).click()
   await page.getByRole('button', { name: '取消' }).click()
   await expect(page.getByRole('dialog', { name: '情况描述' })).toHaveCount(0)
+})
+
+test('新增风险：企业名称支持中文输入法最终值', async ({ page }) => {
+  await page.getByRole('button', { name: '＋ 新增' }).click()
+  const dialog = page.getByRole('dialog', { name: '新增风险信息' })
+  const enterpriseInput = dialog.getByPlaceholder('请输入企业名称')
+  await enterpriseInput.click()
+  await enterpriseInput.pressSequentially('青岛华通测试企业有限公司')
+  await expect(enterpriseInput).toHaveValue('青岛华通测试企业有限公司')
+})
+
+test('风险信息检索：企业名称支持逐字中文输入并传给查询接口', async ({ page }) => {
+  const input = page.getByPlaceholder('请输入企业名称').last()
+  await input.click()
+  await input.pressSequentially('青岛华通测试企业有限公司')
+  await expect(input).toHaveValue('青岛华通测试企业有限公司')
+  const request = page.waitForRequest(request => request.url().includes('/api/supervise/risk/page') && request.url().includes('enterpriseName=%E9%9D%92%E5%B2%9B%E5%8D%8E%E9%80%9A'))
+  await page.getByRole('button', { name: '查询', exact: true }).click()
+  await request
+})
+
+test('处置计划：保存时调用计划创建接口', async ({ page }) => {
+  const row = page.locator('tr', { hasText: '页面测试-风险消除' })
+  await row.locator('a', { hasText: '处置计划' }).click()
+  const dialog = page.getByRole('dialog', { name: '制定处置计划' })
+  await dialog.getByPlaceholder('请输入计划总目标').fill('完成测试处置')
+  await dialog.locator('input[type="date"]').first().fill('2026-08-31')
+  await dialog.getByPlaceholder('请输入内容').fill('完成第一步')
+  await dialog.locator('input[type="date"]').last().fill('2026-08-24')
+  const request = page.waitForRequest('**/api/supervise/risk/risk-elimination/disposal-plans')
+  await dialog.getByRole('button', { name: '保存' }).click()
+  await expect(JSON.parse((await request).postData() || '{}')).toMatchObject({ target: '完成测试处置', deadline: '2026-08-31', steps: [{ content: '完成第一步', plannedAt: '2026-08-24' }] })
 })

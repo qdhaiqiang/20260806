@@ -1,12 +1,13 @@
 -- :name count-risks :? :1
-SELECT count(*) AS total FROM supervise_risk r
+SELECT count(DISTINCT r.id) AS total FROM supervise_risk r
+LEFT JOIN supervise_index risk_index ON risk_index.qcc_code = r.metrics_alias_code
 WHERE coalesce(r.delete_or_not, 0) = 0
   AND (:enterprise_name IS NULL OR r.enterprise_name LIKE '%' || :enterprise_name || '%')
   AND (:risk_level IS NULL OR instr(',' || :risk_level || ',', ',' || r.risk_level || ',') > 0)
   AND (:enterprise_group IS NULL OR instr(',' || :enterprise_group || ',', ',' || r.enterprise_group || ',') > 0)
   AND (:risk_type IS NULL OR instr(',' || :risk_type || ',', ',' || r.risk_type || ',') > 0)
   AND (:operation_status IS NULL OR instr(',' || :operation_status || ',', ',' || r.operation_status || ',') > 0)
-  AND (:manage_dept_id IS NULL OR instr(',' || :manage_dept_id || ',', ',' || r.dept_id || ',') > 0)
+  AND (:manage_dept_id IS NULL OR instr(',' || :manage_dept_id || ',', ',' || risk_index.manage_dept_id || ',') > 0)
   AND (:belonging_plate_id IS NULL OR instr(',' || :belonging_plate_id || ',', ',' || r.belonging_plate_id || ',') > 0)
   AND (:indicator_source IS NULL OR instr(',' || :indicator_source || ',', ',' || r.indicator_source || ',') > 0)
   AND (:start_date IS NULL OR date(r.occur_time) >= date(:start_date))
@@ -17,7 +18,7 @@ SELECT r.id, r.image, r.metrics_name AS metrics_name, r.risk_indicator, r.risk_c
        r.risk_level, r.risk_type, risk_type_data.dict_label AS risk_type_name,
        r.risk_main_type, category_data.dict_label AS risk_main_type_name, r.enterprise_name, r.enterprise_group,
        r.occur_time, r.operation_status, r.send, r.tag, r.risk_review_status, r.reviewer,
-       r.metrics_alias_code, r.qcc_id, r.credit_code, r.belonging_plate_id, r.dept_id AS manage_dept_id, r.full_name,
+       r.metrics_alias_code, r.qcc_id, r.credit_code, r.belonging_plate_id, risk_index.manage_dept_id AS manage_dept_id, manage_dept.name AS manage_dept_name, r.full_name,
        r.company_type, r.shareholding_ratio, r.investment_amount, r.plan_step_state,
        r.indicator_source, r.new_risk_level
 FROM supervise_risk r
@@ -25,13 +26,15 @@ LEFT JOIN sys_dict_type category_type ON category_type.dict_type = 'supv_risk_ca
 LEFT JOIN sys_dict_data category_data ON category_data.dict_type_id = category_type.id AND category_data.dict_value = r.risk_main_type
 LEFT JOIN sys_dict_type risk_type ON risk_type.dict_type = r.risk_main_type
 LEFT JOIN sys_dict_data risk_type_data ON risk_type_data.dict_type_id = risk_type.id AND risk_type_data.dict_value = r.risk_type
+LEFT JOIN supervise_index risk_index ON risk_index.qcc_code = r.metrics_alias_code
+LEFT JOIN sys_dept manage_dept ON manage_dept.id = risk_index.manage_dept_id
 WHERE coalesce(r.delete_or_not, 0) = 0
   AND (:enterprise_name IS NULL OR r.enterprise_name LIKE '%' || :enterprise_name || '%')
   AND (:risk_level IS NULL OR instr(',' || :risk_level || ',', ',' || r.risk_level || ',') > 0)
   AND (:enterprise_group IS NULL OR instr(',' || :enterprise_group || ',', ',' || r.enterprise_group || ',') > 0)
   AND (:risk_type IS NULL OR instr(',' || :risk_type || ',', ',' || r.risk_type || ',') > 0)
   AND (:operation_status IS NULL OR instr(',' || :operation_status || ',', ',' || r.operation_status || ',') > 0)
-  AND (:manage_dept_id IS NULL OR instr(',' || :manage_dept_id || ',', ',' || r.dept_id || ',') > 0)
+  AND (:manage_dept_id IS NULL OR instr(',' || :manage_dept_id || ',', ',' || risk_index.manage_dept_id || ',') > 0)
   AND (:belonging_plate_id IS NULL OR instr(',' || :belonging_plate_id || ',', ',' || r.belonging_plate_id || ',') > 0)
   AND (:indicator_source IS NULL OR instr(',' || :indicator_source || ',', ',' || r.indicator_source || ',') > 0)
   AND (:start_date IS NULL OR date(r.occur_time) >= date(:start_date))
@@ -63,11 +66,23 @@ SELECT count(*) AS total FROM supervise_index i
 WHERE (:indicator_name IS NULL OR i.indicator_name LIKE '%' || :indicator_name || '%');
 
 -- :name list-departments :? :*
--- The original department selector reads the existing organization table.
+-- The original department selector exposes only the eight group departments
+-- available in the risk-information filter, not enterprise nodes.
 SELECT id, pid, pids, name, sort
 FROM sys_dept
 WHERE coalesce(deleted, 0) = 0
-ORDER BY sort, name, id;
+  AND dept_or_company = 1
+  AND name IN ('法务风控部', '财务资产中心', '战略投资中心', '党群宣传部', '企业管理中心', '办公室', '董事会办公室', '组织人资部')
+ORDER BY CASE name
+  WHEN '法务风控部' THEN 1
+  WHEN '财务资产中心' THEN 2
+  WHEN '战略投资中心' THEN 3
+  WHEN '党群宣传部' THEN 4
+  WHEN '企业管理中心' THEN 5
+  WHEN '办公室' THEN 6
+  WHEN '董事会办公室' THEN 7
+  WHEN '组织人资部' THEN 8
+END;
 
 -- :name list-indicators :? :*
 SELECT i.id, i.indicator_name, i.indicator_source, i.risk_level, i.indicator_category1,

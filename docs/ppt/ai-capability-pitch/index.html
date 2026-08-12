@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI 驱动的系统复刻能力｜公司能力汇报</title>
+<link rel="stylesheet" href="assets/fonts.css">
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/animations/animations.css">
+<link rel="stylesheet" href="style.css">
+<style>
+/* 中文适配增强 */
+.tpl-pitch-deck .h1{font-size:72px;line-height:1.1}
+.tpl-pitch-deck .h2{font-size:48px;line-height:1.18}
+.tpl-pitch-deck .lede{font-size:22px;line-height:1.7;max-width:56ch}
+.tpl-pitch-deck .big-q{font-size:42px;line-height:1.35;max-width:26ch}
+.chapter-label{font-size:15px;font-weight:800;color:var(--accent);letter-spacing:.14em;text-transform:uppercase;margin-bottom:18px}
+.stat-card{text-align:center;padding:28px 20px}
+.stat-card .n{font-size:64px}
+.stat-card .l{font-size:15px;margin-top:6px}
+.flow-step{position:relative;padding-left:52px}
+.flow-step::before{content:attr(data-step);position:absolute;left:0;top:0;width:36px;height:36px;border-radius:50%;background:var(--grad);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px}
+.flow-step h4{margin-bottom:6px;font-size:20px}
+.flow-step p{font-size:15px;color:var(--text-2);line-height:1.6}
+</style>
+</head>
+<body class="tpl-pitch-deck" data-themes="corporate-clean,pitch-deck-vc,swiss-grid" data-theme-base="assets/themes/">
+<div class="deck">
+
+  <!-- 1. Cover -->
+  <section class="slide" data-title="Cover">
+    <div class="cover-bg"></div>
+    <div class="cover-blob"></div>
+    <div style="position:absolute;top:56px;left:112px"><span class="brand-dot"></span><span class="brand">AI 工程化交付能力</span></div>
+    <p class="kicker" style="margin-top:120px">面向意向客户 · 能力汇报</p>
+    <h1 class="h1 anim-fade-up" data-anim="fade-up">2 天复刻<br><span class="gradient-text">企业级穿透式监管平台</span></h1>
+    <p class="lede mt-m">以真实项目为证：AI 不只是写代码，更是把复杂系统从"看原图"快速变成"可运行、可构建、可测试"的完整产品。</p>
+    <div class="deck-footer"><span>青岛红创</span><span class="slide-number" data-current="1" data-total="13"></span></div>
+    <div class="notes">
+      开场用真实项目抓注意力。强调这不是概念演示，而是已经完成可运行的系统。用"2天"这个数字制造冲击。
+    </div>
+  </section>
+
+  <!-- 2. Problem -->
+  <section class="slide" data-title="Problem">
+    <span class="section-num">01</span>
+    <p class="num-tag">客户痛点</p>
+    <h2 class="h2 mt-s">企业系统复刻/升级<br>为什么又慢又贵？</h2>
+    <div class="grid g3 mt-l">
+      <div class="card"><h4>业务复杂度高</h4><p class="dim">多角色、多状态、多审批流，需求文档动辄上百页，理解成本极高。</p></div>
+      <div class="card"><h4>沟通链条长</h4><p class="dim">产品、设计、前端、后端、测试反复对齐，一个细节偏差就可能返工数天。</p></div>
+      <div class="card"><h4>周期不可控</h4><p class="dim">传统模式下，复杂系统的原型到可用版本往往需要数周甚至数月。</p></div>
+    </div>
+    <div class="notes">
+      先共情客户。点出他们最熟悉的三个痛点：复杂、沟通、周期长。为后文我们的"快"做铺垫。
+    </div>
+  </section>
+
+  <!-- 3. Solution -->
+  <section class="slide" data-title="Solution">
+    <span class="section-num">02</span>
+    <p class="num-tag">我们的解法</p>
+    <h2 class="h2 mt-s">AI × 工具链 × 工程化<br><span class="gradient-text">让复杂系统交付可预测</span></h2>
+    <p class="lede mt-m">不是用 AI 替代人，而是用 AI 放大工程团队的判断力与执行力：快速理解原系统、自动生成代码、持续构建验证、沉淀规格文档。</p>
+    <div class="row mt-l" style="gap:14px;flex-wrap:wrap">
+      <span class="pill pill-accent">原系统巡检</span>
+      <span class="pill pill-accent">结构/样式/素材提取</span>
+      <span class="pill pill-accent">规格文档沉淀</span>
+      <span class="pill pill-accent">前后端自动生成</span>
+      <span class="pill pill-accent">持续构建测试</span>
+      <span class="pill pill-accent">视觉像素级验收</span>
+    </div>
+    <div class="notes">
+      解释我们的方法论。突出"AI 放大人"而不是"AI 替代人"，让客户感到安全和专业。
+    </div>
+  </section>
+
+  <!-- 4. Case Overview -->
+  <section class="slide" data-title="Case Study">
+    <span class="section-num">03</span>
+    <p class="num-tag">实证项目</p>
+    <h2 class="h2 mt-s">穿透式监管平台复刻</h2>
+    <p class="lede mt-m">某集团内部已有系统：对企业股权、风险、指标、审核进行穿透式监管。我们接到任务：在本地 1:1 复刻一个可独立运行的新系统。</p>
+    <div class="grid g3 mt-l">
+      <div class="card"><h4>业务范畴</h4><p class="dim">12 大类风险、19 种企业分组、多级审核与处置闭环。</p></div>
+      <div class="card"><h4>数据规模</h4><p class="dim">直接复用既有数据库 81 张表，包含企业、指标、风险、计划、日志等。</p></div>
+      <div class="card"><h4>交付目标</h4><p class="dim">页面、路由、表单、列表、弹窗、交互状态全部在本地可运行。</p></div>
+    </div>
+    <div class="notes">
+      介绍项目背景。强调这是真实的内部系统复刻，而非玩具项目。复杂度和业务价值都很高。
+    </div>
+  </section>
+
+  <!-- 5. Key Metrics -->
+  <section class="slide" data-title="Metrics">
+    <span class="section-num">04</span>
+    <p class="num-tag">关键数据</p>
+    <h2 class="h2 mt-s">2 个自然日，从空文件夹到可运行系统</h2>
+    <div class="grid g4 mt-l">
+      <div class="card stat-card"><div class="n">2 天</div><div class="l">项目总历时<br>约 48 小时</div></div>
+      <div class="card stat-card"><div class="n">5,300+</div><div class="l">有效代码行<br>前端 + 后端 + SQL</div></div>
+      <div class="card stat-card"><div class="n">31</div><div class="l">本地 API 路由<br>覆盖风险闭环</div></div>
+      <div class="card stat-card"><div class="n">81</div><div class="l">复用数据表<br>未改原库结构</div></div>
+    </div>
+    <p class="dim mt-l" style="margin-top:40px">成果：前端生产构建通过，后端单元测试 12 个断言 0 失败，7 张本地运行截图已沉淀。</p>
+    <div class="notes">
+      用四个核心数字建立可信度。"2天"、"5300行"、"31个API"、"81张表"都是可验证的事实。
+    </div>
+  </section>
+
+  <!-- 6. Tech Stack -->
+  <section class="slide" data-title="Tech Stack">
+    <span class="section-num">05</span>
+    <p class="num-tag">技术栈全景</p>
+    <h2 class="h2 mt-s">一套成熟、可落地的<br>现代工程组合</h2>
+    <div class="grid g2 mt-l">
+      <div class="card card-hover"><h4>前端</h4><p class="dim">React 19 + TypeScript + Vite，组件、路由、状态、弹窗一体化实现；Playwright 覆盖 E2E。</p></div>
+      <div class="card card-hover"><h4>后端</h4><p class="dim">Clojure + Ring + Reitit + next-jdbc，基于既有 SQLite 数据库构建兼容 API，无需改表。</p></div>
+      <div class="card card-hover"><h4>工程化</h4><p class="dim">类型检查、生产构建、自动化测试、规格文档、进度报告全部在项目内闭环。</p></div>
+      <div class="card card-hover"><h4>AI 协作</h4><p class="dim">代码、SQL、规格、测试、报告、汇报 PPT 均由 AI 在统一上下文中持续生成与迭代。</p></div>
+    </div>
+    <div class="notes">
+      展示技术深度和选型理性。React/Clojure 双栈说明我们不拘泥于单一语言，能根据项目灵活选择。
+    </div>
+  </section>
+
+  <!-- 7. Feature Loop -->
+  <section class="slide" data-title="Feature Loop">
+    <span class="section-num">06</span>
+    <p class="num-tag">功能闭环</p>
+    <h2 class="h2 mt-s">不是静态页面<br>是完整业务闭环</h2>
+    <div class="grid g2 mt-l" style="gap:28px">
+      <div class="card flow-step" data-step="1"><h4>风险发现</h4><p>风险信息列表接入真实数据库，支持 10 维组合筛选、分页、导出。</p></div>
+      <div class="card flow-step" data-step="2"><h4>风险确认</h4><p>支持"是/否风险"判定、原因提交、状态流转与权限控制。</p></div>
+      <div class="card flow-step" data-step="3"><h4>处置计划</h4><p>制定总目标、多步骤计划；更新进度、上传附件、查看完成情况。</p></div>
+      <div class="card flow-step" data-step="4"><h4>多级审核</h4><p>风险状态、等级变化、处置完成、动态调整 4 类审核入口。</p></div>
+    </div>
+    <div class="notes">
+      用流程图方式展示业务能力。强调"闭环"二字，让客户知道交付的是可用系统，不是 demo。
+    </div>
+  </section>
+
+  <!-- 8. AI Architecture Understanding -->
+  <section class="slide" data-title="AI Architecture">
+    <span class="section-num">07</span>
+    <p class="num-tag">AI 快速理解项目</p>
+    <h2 class="h2 mt-s">AI 不只是能写代码<br>更能快速理解复杂项目</h2>
+    <p class="lede mt-m">以另一个真实项目 <strong>renren-security</strong> 为例，我们在短时间内让 AI 完成架构梳理，输出可落地的 C4 模型文档，帮助团队快速掌握项目全貌。</p>
+    <div class="grid g3 mt-l">
+      <div class="card"><h4>系统上下文</h4><p class="dim">明确用户角色、外部依赖、核心功能：RBAC 权限、代码生成、定时任务、云存储。</p></div>
+      <div class="card"><h4>容器架构</h4><p class="dim">梳理 6 大容器：renren-admin、renren-api、renren-generator、renren-ui、MySQL、Redis。</p></div>
+      <div class="card"><h4>组件关系</h4><p class="dim">拆解 10 个核心组件及其依赖矩阵：安全认证、系统管理、日志、定时任务、云存储等。</p></div>
+    </div>
+    <p class="dim mt-l" style="margin-top:40px">产出：10+ 份 C4 架构文档，覆盖 Context / Container / Component / Code 四级视角。</p>
+    <div class="notes">
+      用 renren-security 的真实 C4 文档证明：AI 能快速消化陌生复杂项目。这对接手老系统、遗留系统改造特别有价值。
+    </div>
+  </section>
+
+  <!-- 9. AI Code Forensics -->
+  <section class="slide" data-title="AI Forensics">
+    <span class="section-num">08</span>
+    <p class="num-tag">AI 代码演化分析</p>
+    <h2 class="h2 mt-s">XRay 代码取证<br>让项目健康度一目了然</h2>
+    <p class="lede mt-m">通过 XRay 对 renren-security 进行代码演化取证分析，AI 自动识别热点文件、风险文件、单点拥有风险和模块耦合度，并给出整改优先级。</p>
+    <div class="grid g3 mt-l">
+      <div class="card stat-card"><div class="n">677</div><div class="l">热点文件<br>识别代码高频变更区域</div></div>
+      <div class="card stat-card"><div class="n">10+</div><div class="l">Top 风险文件<br>含主题、登录页、工具类</div></div>
+      <div class="card stat-card"><div class="n">100%</div><div class="l">单点拥有风险<br>关键文件由单一作者维护</div></div>
+    </div>
+    <p class="dim mt-l" style="margin-top:40px">产出：管理层摘要 + 技术分析 + 整改计划 + 重构指南 4 份报告，可直接纳入迭代复盘。</p>
+    <div class="notes">
+      XRay 报告证明我们不仅能写，还能"看懂"项目健康状况。对客户的遗留系统接力和技术债治理是强加分项。
+    </div>
+  </section>
+
+  <!-- 10. Efficiency Comparison -->
+  <section class="slide" data-title="Efficiency">
+    <span class="section-num">09</span>
+    <p class="num-tag">效率对比</p>
+    <h2 class="h2 mt-s">传统交付 vs AI 工程化交付</h2>
+    <div class="grid g2 mt-l">
+      <div class="card" style="border:2px solid var(--border-strong)">
+        <h4 style="color:var(--text-2)">传统模式估算</h4>
+        <div class="metric mt-s"><div class="n" style="font-size:48px;color:var(--text-2)">4–6 周</div></div>
+        <ul class="dim" style="margin-top:18px;padding-left:20px;line-height:1.9;font-size:15px">
+          <li>需求梳理与原型 1–2 周</li>
+          <li>前端/后端开发 3–4 周</li>
+          <li>联调与测试 1–2 周</li>
+          <li>频繁返工与沟通损耗</li>
+        </ul>
+      </div>
+      <div class="card card-accent" style="background:var(--grad-soft);border:2px solid transparent">
+        <h4 style="color:var(--accent)">AI 工程化交付</h4>
+        <div class="metric mt-s"><div class="n" style="font-size:48px">2 天</div></div>
+        <ul style="margin-top:18px;padding-left:20px;line-height:1.9;font-size:15px;color:var(--text-2)">
+          <li>快速理解并提取原系统规格</li>
+          <li>前后端代码同步生成与迭代</li>
+          <li>构建、测试、验证随开发持续完成</li>
+          <li>效率提升约 8–15 倍</li>
+        </ul>
+      </div>
+    </div>
+    <div class="notes">
+      这是核心卖点页。用左右对比让客户直观感受到速度差异。注意表述是"估算"和"本项目实际"，保持诚实。
+    </div>
+  </section>
+
+  <!-- 11. AI Toolchain -->
+  <section class="slide" data-title="AI Toolchain">
+    <span class="section-num">10</span>
+    <p class="num-tag">AI 工具链</p>
+    <h2 class="h2 mt-s">AI 不是单点工具<br>而是贯穿交付全链路</h2>
+    <div class="grid g3 mt-l">
+      <div class="card"><h4>理解</h4><p class="dim">自动巡检原系统页面，提取 DOM、CSS、文案、素材链接与交互行为。</p></div>
+      <div class="card"><h4>设计</h4><p class="dim">沉淀 4 份组件规格文档，明确弹窗状态、字段、接口契约。</p></div>
+      <div class="card"><h4>开发</h4><p class="dim">生成 4,000+ 行前端组件与 700+ 行后端 API，自动处理类型与路由。</p></div>
+      <div class="card"><h4>验证</h4><p class="dim">持续运行 npm build 与后端测试，快速发现并修复问题。</p></div>
+      <div class="card"><h4>沉淀</h4><p class="dim">自动生成进度报告、效率实证报告，以及您现在看到的这份 PPT。</p></div>
+      <div class="card"><h4>协作</h4><p class="dim">人类把控业务边界与质量，AI 承担重复性实现与文档工作。</p></div>
+    </div>
+    <div class="notes">
+      强调"工具链全面"。连 PPT 本身都是 AI 产出的，这是最强的自证。让客户相信我们不只会写代码。
+    </div>
+  </section>
+
+  <!-- 12. Customer Value -->
+  <section class="slide" data-title="Value">
+    <span class="section-num">11</span>
+    <p class="num-tag">客户价值</p>
+    <h2 class="h2 mt-s">这能为您的业务带来什么？</h2>
+    <div class="grid g3 mt-l">
+      <div class="card card-hover"><h4>快速验证想法</h4><p class="dim">原有系统升级、新产品原型、内部工具改造，都可以在数天内看到可运行版本。</p></div>
+      <div class="card card-hover"><h4>降低沟通成本</h4><p class="dim">规格文档、截图、可运行代码同时产出，减少需求往返，缩短决策链。</p></div>
+      <div class="card card-hover"><h4>保护既有资产</h4><p class="dim">无需改动现有数据库结构，基于原表构建新接口，降低迁移风险。</p></div>
+      <div class="card card-hover"><h4>可预测交付</h4><p class="dim">持续构建与测试保证每轮改动都可验证，进度透明、风险可见。</p></div>
+      <div class="card card-hover"><h4>工程能力复用</h4><p class="dim">沉淀的规格、组件、API 模式可直接复用到后续项目，越交付越快。</p></div>
+      <div class="card card-hover"><h4>人机协同质量</h4><p class="dim">AI 负责高效实现，资深工程师把控架构与业务边界，质量不妥协。</p></div>
+    </div>
+    <div class="notes">
+      从"我们做了什么"转向"对客户有什么用"。六个价值点覆盖速度、成本、风险、质量。
+    </div>
+  </section>
+
+  <!-- 11. CTA / Thanks -->
+  <section class="slide center tc" data-title="Thanks">
+    <div class="cover-bg"></div>
+    <div>
+      <p class="kicker" style="display:inline-block">下一步</p>
+      <h2 class="h2" style="font-size:56px;margin-top:12px">让我们用您的系统<br>做一个 2 天复刻验证</h2>
+      <p class="lede mt-m" style="margin:24px auto 0;max-width:50ch">选择一个现有页面或模块，我们将在 2 天内交付可运行的本地版本、规格文档与验收报告，作为合作的第一个实证。</p>
+      <div class="row mt-l" style="justify-content:center;gap:24px;flex-wrap:wrap">
+        <span class="pill pill-accent">预约 30 分钟方案沟通</span>
+        
+      </div>
+      <p class="dim mt-l" style="margin-top:48px;font-size:15px">本 PPT 同样由 AI 生成 · 2026-08-12</p>
+    </div>
+    <div class="notes">
+      结尾给出明确的下一步行动。用"2天复刻验证"作为低门槛的切入点，促成商务沟通。
+    </div>
+  </section>
+
+</div>
+<script src="assets/runtime.js"></script>
+</body></html>

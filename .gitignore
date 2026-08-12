@@ -23,3 +23,9 @@ coverage/
 .vite/
 .cache/
 .cpcache/
+
+# Large PDF rendering fonts (kept locally, not committed)
+tmp/pdfs/*.ttf
+tmp/pdfs/*.otf
+tmp/pdfs/*.woff
+tmp/pdfs/*.woff2

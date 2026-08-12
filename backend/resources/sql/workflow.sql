@@ -3,6 +3,18 @@
 -- :name find-risk-by-source-key :? :1
 SELECT * FROM supervise_risk WHERE unique_hashkey=:source_key AND coalesce(delete_or_not,0)=0;
 
+-- :name create-manual-risk! :! :1
+INSERT INTO supervise_risk
+  (id,image,metrics_name,risk_indicator,risk_content,risk_level,risk_main_type,risk_type,
+   enterprise_name,enterprise_group,occur_time,operation_status,create_time,update_time,
+   dept_id,metrics_alias_code,delete_or_not,qcc_id,credit_code,belonging_plate_id,
+   shareholding_ratio,investment_amount,plan_step_state,indicator_source)
+VALUES
+  (:id,:image,:metrics_name,:risk_indicator,:risk_content,:risk_level,:risk_main_type,:risk_type,
+   :enterprise_name,:enterprise_group,:occur_time,0,datetime('now'),datetime('now'),
+   :dept_id,:metrics_alias_code,0,:qcc_id,:credit_code,:belonging_plate_id,
+   :shareholding_ratio,:investment_amount,0,:indicator_source);
+
 -- :name transition-risk-status! :! :n
 UPDATE supervise_risk
 SET operation_status=:next_status, update_time=datetime('now')
