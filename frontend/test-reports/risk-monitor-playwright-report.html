@@ -3,41 +3,57 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>风险监控页面测试报告</title>
+  <title>风险管理页面测试报告</title>
   <style>
     body{margin:0;background:#f5f7fb;color:#172033;font:15px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif}
-    main{max-width:920px;margin:40px auto;background:#fff;padding:40px 48px;border-radius:12px;box-shadow:0 8px 28px #17203312}
-    h1{margin:0 0 8px;font-size:26px}.meta{color:#68738a;margin:0 0 28px}.pass{color:#16803c;font-weight:700}.note{border-left:4px solid #faad14;background:#fffbe6;padding:12px 16px}.ok{border-left:4px solid #32a852;background:#f6ffed;padding:12px 16px}table{width:100%;border-collapse:collapse;margin:16px 0 28px}th,td{padding:11px 12px;text-align:left;border-bottom:1px solid #e8ebf0}th{background:#f7f9fc;color:#536176}code{background:#f1f3f6;padding:2px 5px;border-radius:4px}li{margin:7px 0}
+    main{max-width:1120px;margin:40px auto;background:#fff;padding:40px 48px;border-radius:12px;box-shadow:0 8px 28px #17203312}
+    h1{margin:0 0 8px;font-size:26px}.meta{color:#68738a;margin:0 0 28px}.pass{color:#16803c;font-weight:700}.ok{border-left:4px solid #32a852;background:#f6ffed;padding:12px 16px}.note{border-left:4px solid #1677ff;background:#e6f4ff;padding:12px 16px}table{width:100%;border-collapse:collapse;margin:16px 0 28px}th,td{padding:11px 12px;text-align:left;vertical-align:top;border-bottom:1px solid #e8ebf0}th{background:#f7f9fc;color:#536176}code{background:#f1f3f6;padding:2px 5px;border-radius:4px}.nowrap{white-space:nowrap}
   </style>
 </head>
 <body>
   <main>
-    <h1>风险监控页面测试报告</h1>
-    <p class="meta">执行时间：2026-08-09 18:50 +0800 · 工具：Playwright / Chromium · 命令：<code>cd frontend &amp;&amp; npm run test:e2e</code></p>
-    <div class="ok"><strong class="pass">通过</strong>：7 / 7 用例通过，构建 <code>npm run build</code> 通过。</div>
+    <h1>风险管理页面测试报告</h1>
+    <p class="meta">执行时间：2026-08-13（+0800） · 工具：Playwright / Chromium · 命令：<code>cd frontend &amp;&amp; npm run test:e2e</code></p>
+    <div class="ok"><strong class="pass">通过</strong>：19 / 19 页面用例通过（7.5 秒）；<code>npm run build</code> 通过。</div>
+
     <h2>执行摘要</h2>
     <table>
-      <tr><th>项目</th><td>结果</td></tr>
-      <tr><th>页面用例</th><td>7</td></tr>
-      <tr><th>通过 / 失败</th><td>7 / 0</td></tr>
-      <tr><th>运行耗时</th><td>5.3 秒</td></tr>
-      <tr><th>数据隔离</th><td>每个用例创建独立内存 API 状态；页面请求由 Playwright 路由拦截，避免依赖或污染本地数据库。</td></tr>
+      <tr><th>模块</th><th>用例数</th><th>通过 / 失败</th><th>覆盖内容</th></tr>
+      <tr><td>风险信息</td><td>12</td><td class="pass">12 / 0</td><td>列表、中文检索、筛选重置、分页、详情、描述/确认/消除、校验、取消、新增、处置计划</td></tr>
+      <tr><td>机构管理</td><td>2</td><td class="pass">2 / 0</td><td>列表、检索、分页、新增取消、新增提交、编辑提交</td></tr>
+      <tr><td>指标管理</td><td>2</td><td class="pass">2 / 0</td><td>列表、检索、新增取消/提交、风险等级设置加载/保存/取消</td></tr>
+      <tr><td>待审核</td><td>3</td><td class="pass">3 / 0</td><td>状态审核、详情、审核记录、筛选重置、确认/等级/处置审核标签及接口映射、驳回</td></tr>
+      <tr><th>合计</th><th>19</th><th class="pass">19 / 0</th><th>每个用例均准备独立 API 返回状态。</th></tr>
     </table>
-    <h2>已验证页面场景</h2>
+
+    <h2>页面场景明细</h2>
     <table>
-      <thead><tr><th>场景</th><th>准备状态</th><th>页面操作与断言</th><th>结果</th></tr></thead>
+      <thead><tr><th class="nowrap">模块</th><th>场景</th><th>准备数据状态</th><th>关键页面断言</th><th>结果</th></tr></thead>
       <tbody>
-        <tr><td>情况描述成功</td><td><code>DESCRIPTION_PENDING</code></td><td>点击“情况描述”，填写发生原因、报备集团和报备内容，提交后列表刷新为未确认状态。</td><td class="pass">通过</td></tr>
-        <tr><td>风险确认成功</td><td><code>UNCONFIRMED</code></td><td>点击“风险确认”，填写补充说明，以“是风险”提交，断言列表显示“确认待审核”。</td><td class="pass">通过</td></tr>
-        <tr><td>风险消除成功</td><td><code>CONFIRMED</code> + 处置完成</td><td>点击“风险消除”，填写理由并提交，断言列表显示“已消除”。</td><td class="pass">通过</td></tr>
-        <tr><td>情况描述失败校验</td><td><code>DESCRIPTION_PENDING</code></td><td>直接提交空表单，断言阻止请求并显示“请填写发生原因”。</td><td class="pass">通过</td></tr>
-        <tr><td>筛选与重置</td><td>风险列表</td><td>输入企业名称并点击查询，断言请求携带 <code>enterpriseName</code>；点击重置后断言输入框已清空。</td><td class="pass">通过</td></tr>
-        <tr><td>分页</td><td>总数 30 条</td><td>点击第 2 页，断言列表重新请求且携带 <code>pageNum=2</code>，并显示当前页样式。</td><td class="pass">通过</td></tr>
-        <tr><td>详情与取消</td><td>待描述风险</td><td>验证详情弹窗标题、企业名、风险内容、操作记录空态；关闭后再打开情况描述并取消，断言弹窗关闭且未提交。</td><td class="pass">通过</td></tr>
+        <tr><td rowspan="10">风险信息</td><td>情况描述成功</td><td><code>DESCRIPTION_PENDING</code></td><td>填写原因、报备集团及内容并提交；断言状态刷新。</td><td class="pass">通过</td></tr>
+        <tr><td>风险确认成功</td><td><code>UNCONFIRMED</code></td><td>提交“是风险”；断言进入确认待审核。</td><td class="pass">通过</td></tr>
+        <tr><td>风险消除成功</td><td><code>CONFIRMED</code> 且处置完成</td><td>填写消除理由；断言显示已消除。</td><td class="pass">通过</td></tr>
+        <tr><td>情况描述失败校验</td><td><code>DESCRIPTION_PENDING</code></td><td>空原因直接提交；断言提示“请填写发生原因”，且不发提交请求。</td><td class="pass">通过</td></tr>
+        <tr><td>筛选与重置</td><td>风险列表</td><td>企业名称作为查询参数发送；重置后输入框清空。</td><td class="pass">通过</td></tr>
+        <tr><td>分页</td><td>总数 30 条</td><td>点击第 2 页；断言请求含 <code>pageNum=2</code> 与当前页状态。</td><td class="pass">通过</td></tr>
+        <tr><td>详情与取消</td><td>待描述风险</td><td>验证详情、操作记录空态；取消后关闭弹窗且不提交。</td><td class="pass">通过</td></tr>
+        <tr><td>新增风险</td><td>新增表单</td><td>中文输入法最终值正确保留并进入请求体。</td><td class="pass">通过</td></tr>
+        <tr><td>新增风险必填校验</td><td>空新增表单</td><td>保存被阻止，提示“请完整填写必填项”，弹窗保持打开。</td><td class="pass">通过</td></tr>
+        <tr><td>中文检索</td><td>风险列表</td><td>逐字输入中文；断言查询请求携带完整企业名称。</td><td class="pass">通过</td></tr>
+        <tr><td>处置计划</td><td>可创建计划的风险</td><td>保存时调用计划创建接口。</td><td class="pass">通过</td></tr>
+        <tr><td>处置计划失败校验</td><td>空计划目标/步骤</td><td>保存被阻止，提示完整性要求，弹窗保持打开。</td><td class="pass">通过</td></tr>
+        <tr><td rowspan="2">机构管理</td><td>列表、检索、分页、新增取消</td><td>21 条机构数据</td><td>展示机构、按名称检索、切页；新增弹窗取消后关闭。</td><td class="pass">通过</td></tr>
+        <tr><td>新增和编辑提交</td><td>已有机构</td><td>断言新增 POST 与编辑 PUT 的表单字段和机构 ID。</td><td class="pass">通过</td></tr>
+        <tr><td rowspan="2">指标管理</td><td>列表、检索、新增</td><td>21 条指标数据</td><td>展示及查询；新增弹窗取消、确认与 POST 请求体正确。</td><td class="pass">通过</td></tr>
+        <tr><td>风险等级设置</td><td>指标风险等级配置</td><td>弹窗加载、取消关闭；保存请求带正确 <code>indexId</code>。</td><td class="pass">通过</td></tr>
+        <tr><td rowspan="2">待审核</td><td>状态审核、详情、记录、筛选重置</td><td>确认待审核风险</td><td>详情内容和审核记录正确；审核提交含 <code>auditStatus</code> 与操作人；重置清空查询。</td><td class="pass">通过</td></tr>
+        <tr><td>等级/处置审核映射</td><td>等级调整、处置完成待审核</td><td>切换标签显示正确数据和处置进度；分别调用对应审核接口。</td><td class="pass">通过</td></tr>
+        <tr><td>审核驳回</td><td>确认待审核风险</td><td>选择“不同意”并填写原因；请求含驳回状态、原因和操作人。</td><td class="pass">通过</td></tr>
       </tbody>
     </table>
-    <h2>覆盖边界</h2>
-    <div class="note">当前前端风险监控页尚无“处置计划创建/进度维护/完成审核/消除审核/等级调整审核”的可点击入口，因此无法在浏览器中完成这些流程。相应成功、驳回与非法状态分支由后端单元测试覆盖（10 个 case、84 个断言）。这些页面入口补齐后，应继续增加真实页面端到端用例。</div>
+
+    <h2>测试边界</h2>
+    <div class="note">这是前端交互测试：每个 case 通过 Playwright 路由拦截准备独立数据状态，验证页面展示、弹窗文案、提交/取消行为和请求参数，不连接或修改 <code>test1.sqlite</code>。与页面配套的后端状态流转与非法状态校验由单元测试覆盖：10 个测试、84 个断言，详见 <code>backend/test-reports/risk-workflow-unit-test-report.md</code>。</div>
   </main>
 </body>
 </html>

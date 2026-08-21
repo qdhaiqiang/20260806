@@ -11,7 +11,7 @@ INSERT INTO supervise_risk
    shareholding_ratio,investment_amount,plan_step_state,indicator_source)
 VALUES
   (:id,:image,:metrics_name,:risk_indicator,:risk_content,:risk_level,:risk_main_type,:risk_type,
-   :enterprise_name,:enterprise_group,:occur_time,0,datetime('now'),datetime('now'),
+   :enterprise_name,:enterprise_group,:occur_time,:operation_status,datetime('now'),datetime('now'),
    :dept_id,:metrics_alias_code,0,:qcc_id,:credit_code,:belonging_plate_id,
    :shareholding_ratio,:investment_amount,0,:indicator_source);
 

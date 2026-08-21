@@ -2,25 +2,88 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AI 驱动的系统复刻能力｜公司能力汇报</title>
+<title>青岛红创｜AI 工程化交付能力汇报</title>
 <link rel="stylesheet" href="assets/fonts.css">
 <link rel="stylesheet" href="assets/base.css">
 <link rel="stylesheet" href="assets/animations/animations.css">
 <link rel="stylesheet" href="style.css">
 <style>
-/* 中文适配增强 */
-.tpl-pitch-deck .h1{font-size:72px;line-height:1.1}
-.tpl-pitch-deck .h2{font-size:48px;line-height:1.18}
-.tpl-pitch-deck .lede{font-size:22px;line-height:1.7;max-width:56ch}
-.tpl-pitch-deck .big-q{font-size:42px;line-height:1.35;max-width:26ch}
-.chapter-label{font-size:15px;font-weight:800;color:var(--accent);letter-spacing:.14em;text-transform:uppercase;margin-bottom:18px}
-.stat-card{text-align:center;padding:28px 20px}
-.stat-card .n{font-size:64px}
-.stat-card .l{font-size:15px;margin-top:6px}
-.flow-step{position:relative;padding-left:52px}
-.flow-step::before{content:attr(data-step);position:absolute;left:0;top:0;width:36px;height:36px;border-radius:50%;background:var(--grad);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px}
-.flow-step h4{margin-bottom:6px;font-size:20px}
-.flow-step p{font-size:15px;color:var(--text-2);line-height:1.6}
+/* 中文适配 + 高密度布局：内容从顶部开始，用颜色标签和图标填充卡片 */
+.tpl-pitch-deck .slide{
+  justify-content:flex-start;
+  padding:24px 52px 20px;
+  gap:0;
+}
+.tpl-pitch-deck .slide:first-of-type,
+.tpl-pitch-deck .slide[data-title="Thanks"]{
+  justify-content:center;
+  padding:72px 96px;
+}
+.tpl-pitch-deck .section-num{
+  position:absolute;
+  top:20px;
+  right:52px;
+  font-size:42px;
+  font-weight:800;
+  line-height:1;
+  color:var(--surface-2);
+  z-index:0;
+}
+.tpl-pitch-deck .slide > *{position:relative;z-index:1}
+.tpl-pitch-deck .num-tag{font-size:11px;font-weight:800;margin-bottom:4px;letter-spacing:.1em}
+.tpl-pitch-deck .h1{font-size:56px;line-height:1.1}
+.tpl-pitch-deck .h2{font-size:28px;line-height:1.25;margin-bottom:10px}
+.tpl-pitch-deck .lede{font-size:15px;line-height:1.6;max-width:70ch;margin-top:0;margin-bottom:12px}
+.tpl-pitch-deck .kicker{font-size:12px}
+.tpl-pitch-deck .grid{gap:10px}
+.tpl-pitch-deck .grid > .card{height:auto;display:flex;flex-direction:column}
+.tpl-pitch-deck .card{padding:13px 15px;border-radius:12px}
+.tpl-pitch-deck .card h4{font-size:18px;margin-bottom:6px}
+.tpl-pitch-deck .card p{font-size:14px;line-height:1.65;margin:0}
+
+/* 彩色左侧边框 */
+.tpl-pitch-deck .role-blue{border-left:4px solid #3b6cff}
+.tpl-pitch-deck .role-purple{border-left:4px solid #7a46ff}
+.tpl-pitch-deck .role-red{border-left:4px solid #e0445a}
+.tpl-pitch-deck .role-green{border-left:4px solid #1aaf6c}
+.tpl-pitch-deck .role-orange{border-left:4px solid #f5a524}
+
+/* 标签 */
+.card-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tag-pill{display:inline-flex;align-items:center;padding:4px 9px;border-radius:99px;font-size:11px;font-weight:700;letter-spacing:.02em}
+.tag-pill.blue{background:#eef2ff;color:#3b6cff}
+.tag-pill.purple{background:#f4edff;color:#7a46ff}
+.tag-pill.red{background:#ffeff1;color:#e0445a}
+.tag-pill.green{background:#eafff6;color:#1aaf6c}
+.tag-pill.orange{background:#fff7e6;color:#f5a524}
+.tag-pill.gray{background:#f2f4fa;color:#4a5070}
+
+/* 流程步骤 */
+.tpl-pitch-deck .flow-step{position:relative;padding-left:38px}
+.tpl-pitch-deck .flow-step::before{content:attr(data-step);position:absolute;left:0;top:0;width:26px;height:26px;border-radius:50%;background:var(--grad);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px}
+.tpl-pitch-deck .flow-step h4{margin-bottom:4px;font-size:16px}
+.tpl-pitch-deck .flow-step p{font-size:13px;color:var(--text-2);line-height:1.6}
+
+/* 状态标签 */
+.tpl-pitch-deck .status-tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:700;background:#f2f4fa;color:#4a5070;margin:2px}
+.tpl-pitch-deck .status-tag.active{background:var(--grad);color:#fff}
+
+/* 角色卡片 */
+.tpl-pitch-deck .role-card{padding-left:14px;border-left-width:4px}
+.tpl-pitch-deck .role-card h4{font-size:17px;margin-bottom:5px}
+.tpl-pitch-deck .role-card p{font-size:13px;line-height:1.65}
+
+/* 统计卡片 */
+.tpl-pitch-deck .stat-card{text-align:center;padding:14px 12px}
+.tpl-pitch-deck .stat-card .n{font-size:44px}
+.tpl-pitch-deck .stat-card .l{font-size:13px;margin-top:4px;line-height:1.4}
+.tpl-pitch-deck .stat-card .time-detail{font-size:11px;color:var(--text-2);margin-top:6px;line-height:1.55}
+
+/* 辅助 */
+.metric-aux{font-size:12px;color:var(--text-2);line-height:1.55;margin-top:6px}
+.tpl-pitch-deck .mt-l{margin-top:18px}
+.tpl-pitch-deck .mt-m{margin-top:12px}
+.tpl-pitch-deck .mt-s{margin-top:4px}
 </style>
 </head>
 <body class="tpl-pitch-deck" data-themes="corporate-clean,pitch-deck-vc,swiss-grid" data-theme-base="assets/themes/">
@@ -30,218 +93,577 @@
   <section class="slide" data-title="Cover">
     <div class="cover-bg"></div>
     <div class="cover-blob"></div>
-    <div style="position:absolute;top:56px;left:112px"><span class="brand-dot"></span><span class="brand">AI 工程化交付能力</span></div>
-    <p class="kicker" style="margin-top:120px">面向意向客户 · 能力汇报</p>
+    <div style="position:absolute;top:56px;left:112px"><span class="brand-dot"></span><span class="brand">青岛红创</span></div>
+    <p class="kicker" style="margin-top:120px">AI 工程化交付能力 · 面向意向客户</p>
     <h1 class="h1 anim-fade-up" data-anim="fade-up">2 天复刻<br><span class="gradient-text">企业级穿透式监管平台</span></h1>
-    <p class="lede mt-m">以真实项目为证：AI 不只是写代码，更是把复杂系统从"看原图"快速变成"可运行、可构建、可测试"的完整产品。</p>
-    <div class="deck-footer"><span>青岛红创</span><span class="slide-number" data-current="1" data-total="13"></span></div>
+    <p class="lede mt-m">以真实项目为证：AI 不只是写代码，更能把复杂的集团风险监管业务从"看原图"快速变成"可运行、可构建、可测试"的完整系统。</p>
+    <div class="deck-footer"><span>青岛红创</span><span class="slide-number" data-current="1" data-total="12"></span></div>
     <div class="notes">
       开场用真实项目抓注意力。强调这不是概念演示，而是已经完成可运行的系统。用"2天"这个数字制造冲击。
     </div>
   </section>
 
-  <!-- 2. Problem -->
-  <section class="slide" data-title="Problem">
+  <!-- 2. Project Background -->
+  <section class="slide" data-title="Background">
     <span class="section-num">01</span>
-    <p class="num-tag">客户痛点</p>
-    <h2 class="h2 mt-s">企业系统复刻/升级<br>为什么又慢又贵？</h2>
-    <div class="grid g3 mt-l">
-      <div class="card"><h4>业务复杂度高</h4><p class="dim">多角色、多状态、多审批流，需求文档动辄上百页，理解成本极高。</p></div>
-      <div class="card"><h4>沟通链条长</h4><p class="dim">产品、设计、前端、后端、测试反复对齐，一个细节偏差就可能返工数天。</p></div>
-      <div class="card"><h4>周期不可控</h4><p class="dim">传统模式下，复杂系统的原型到可用版本往往需要数周甚至数月。</p></div>
-    </div>
-    <div class="notes">
-      先共情客户。点出他们最熟悉的三个痛点：复杂、沟通、周期长。为后文我们的"快"做铺垫。
-    </div>
-  </section>
-
-  <!-- 3. Solution -->
-  <section class="slide" data-title="Solution">
-    <span class="section-num">02</span>
-    <p class="num-tag">我们的解法</p>
-    <h2 class="h2 mt-s">AI × 工具链 × 工程化<br><span class="gradient-text">让复杂系统交付可预测</span></h2>
-    <p class="lede mt-m">不是用 AI 替代人，而是用 AI 放大工程团队的判断力与执行力：快速理解原系统、自动生成代码、持续构建验证、沉淀规格文档。</p>
-    <div class="row mt-l" style="gap:14px;flex-wrap:wrap">
-      <span class="pill pill-accent">原系统巡检</span>
-      <span class="pill pill-accent">结构/样式/素材提取</span>
-      <span class="pill pill-accent">规格文档沉淀</span>
-      <span class="pill pill-accent">前后端自动生成</span>
-      <span class="pill pill-accent">持续构建测试</span>
-      <span class="pill pill-accent">视觉像素级验收</span>
-    </div>
-    <div class="notes">
-      解释我们的方法论。突出"AI 放大人"而不是"AI 替代人"，让客户感到安全和专业。
-    </div>
-  </section>
-
-  <!-- 4. Case Overview -->
-  <section class="slide" data-title="Case Study">
-    <span class="section-num">03</span>
-    <p class="num-tag">实证项目</p>
-    <h2 class="h2 mt-s">穿透式监管平台复刻</h2>
-    <p class="lede mt-m">某集团内部已有系统：对企业股权、风险、指标、审核进行穿透式监管。我们接到任务：在本地 1:1 复刻一个可独立运行的新系统。</p>
-    <div class="grid g3 mt-l">
-      <div class="card"><h4>业务范畴</h4><p class="dim">12 大类风险、19 种企业分组、多级审核与处置闭环。</p></div>
-      <div class="card"><h4>数据规模</h4><p class="dim">直接复用既有数据库 81 张表，包含企业、指标、风险、计划、日志等。</p></div>
-      <div class="card"><h4>交付目标</h4><p class="dim">页面、路由、表单、列表、弹窗、交互状态全部在本地可运行。</p></div>
-    </div>
-    <div class="notes">
-      介绍项目背景。强调这是真实的内部系统复刻，而非玩具项目。复杂度和业务价值都很高。
-    </div>
-  </section>
-
-  <!-- 5. Key Metrics -->
-  <section class="slide" data-title="Metrics">
-    <span class="section-num">04</span>
-    <p class="num-tag">关键数据</p>
-    <h2 class="h2 mt-s">2 个自然日，从空文件夹到可运行系统</h2>
+    <p class="num-tag">项目背景</p>
+    <h2 class="h2 mt-s">集团型企业风险监管为什么难做？</h2>
     <div class="grid g4 mt-l">
-      <div class="card stat-card"><div class="n">2 天</div><div class="l">项目总历时<br>约 48 小时</div></div>
-      <div class="card stat-card"><div class="n">5,300+</div><div class="l">有效代码行<br>前端 + 后端 + SQL</div></div>
-      <div class="card stat-card"><div class="n">31</div><div class="l">本地 API 路由<br>覆盖风险闭环</div></div>
-      <div class="card stat-card"><div class="n">81</div><div class="l">复用数据表<br>未改原库结构</div></div>
+      <div class="card role-blue">
+        <h4>企业层级多</h4>
+        <p class="dim">从集团本部到二级企业、三级公司、基金及子基金，股权层级可达 5–7 层。全资、控股、参股关系交织，风险传导路径复杂，需要逐层穿透识别。</p>
+        <div class="card-tags">
+          <span class="tag-pill blue">5–7 层股权</span>
+          <span class="tag-pill blue">全资/控股/参股</span>
+          <span class="tag-pill blue">风险传导</span>
+        </div>
+      </div>
+      <div class="card role-purple">
+        <h4>风险来源杂</h4>
+        <p class="dim">工商变更、司法诉讼、行政处罚、经营异常、财务指标异常、舆情信息等数据格式各异，需要统一接入、解析、分类，并分发到对应责任主体。</p>
+        <div class="card-tags">
+          <span class="tag-pill purple">工商/司法/舆情</span>
+          <span class="tag-pill purple">多格式接入</span>
+          <span class="tag-pill purple">统一分发</span>
+        </div>
+      </div>
+      <div class="card role-orange">
+        <h4>处置流程长</h4>
+        <p class="dim">从风险发现到情况描述、风险确认、处置计划、完成审核、风险消除，涉及管理主体、主责部门、法务风控部等多方协同，状态反复回退。</p>
+        <div class="card-tags">
+          <span class="tag-pill orange">6 步闭环</span>
+          <span class="tag-pill orange">多方协同</span>
+          <span class="tag-pill orange">状态回退</span>
+        </div>
+      </div>
+      <div class="card role-green">
+        <h4>数据资产重</h4>
+        <p class="dim">原系统已积累大量历史数据与业务规则，包含 81 张数据表、数百个字段。复刻时必须保护原库结构，不能迁移或重建历史库。</p>
+        <div class="card-tags">
+          <span class="tag-pill green">81 张数据表</span>
+          <span class="tag-pill green">原库不动</span>
+          <span class="tag-pill green">兼容查询</span>
+        </div>
+      </div>
     </div>
-    <p class="dim mt-l" style="margin-top:40px">成果：前端生产构建通过，后端单元测试 12 个断言 0 失败，7 张本地运行截图已沉淀。</p>
+    <div class="grid g2 mt-l" style="gap:10px">
+      <div class="card card-soft"><h4>项目目标</h4><p class="dim">在本地 1:1 复刻一个可独立运行的穿透式监管平台，完整覆盖原系统业务逻辑、页面结构与数据交互。</p></div>
+      <div class="card card-soft"><h4>关键约束</h4><p class="dim">不动原库结构；前端可构建通过；后端接口可运行并附带测试；所有实现必须有规格文档与渲染截图对照。</p></div>
+    </div>
     <div class="notes">
-      用四个核心数字建立可信度。"2天"、"5300行"、"31个API"、"81张表"都是可验证的事实。
+      先讲业务背景，让客户理解这不是简单的网页，而是有真实监管场景、数据约束和多角色协作的企业级系统。
     </div>
   </section>
 
-  <!-- 6. Tech Stack -->
-  <section class="slide" data-title="Tech Stack">
-    <span class="section-num">05</span>
-    <p class="num-tag">技术栈全景</p>
-    <h2 class="h2 mt-s">一套成熟、可落地的<br>现代工程组合</h2>
+  <!-- 3. System Positioning -->
+  <section class="slide" data-title="Positioning">
+    <span class="section-num">02</span>
+    <p class="num-tag">系统定位</p>
+    <h2 class="h2 mt-s">穿透式监管平台管什么、怎么管</h2>
+    <p class="lede mt-m">对企业股权结构、风险指标、处置进度进行穿透式监管，实现"风险看得见、责任分得清、处置跟得上"。</p>
+    <div class="grid g4 mt-l">
+      <div class="card role-blue">
+        <h4>股权穿透</h4>
+        <p class="dim">企业树搜索、企查查股权结构图嵌入，可视化展示全资/控股/参股/基金关系；支持按企业分组、层级、状态快速筛选。</p>
+        <div class="card-tags">
+          <span class="tag-pill blue">企业树</span>
+          <span class="tag-pill blue">股权结构图</span>
+          <span class="tag-pill blue">多层级筛选</span>
+        </div>
+      </div>
+      <div class="card role-purple">
+        <h4>风险穿透</h4>
+        <p class="dim">12 大类风险、19 种企业分组、多级风险状态，支持组合筛选与分类导航；每类风险关联具体指标与原始报文。</p>
+        <div class="card-tags">
+          <span class="tag-pill purple">12 类风险</span>
+          <span class="tag-pill purple">19 种分组</span>
+          <span class="tag-pill purple">原始报文</span>
+        </div>
+      </div>
+      <div class="card role-red">
+        <h4>责任穿透</h4>
+        <p class="dim">管理主体、主责部门、法务风控部、战略投资中心各司其职；系统按角色控制按钮、字段、审核与通知权限。</p>
+        <div class="card-tags">
+          <span class="tag-pill red">4 类角色</span>
+          <span class="tag-pill red">按钮级权限</span>
+          <span class="tag-pill red">字段级权限</span>
+        </div>
+      </div>
+      <div class="card role-green">
+        <h4>协同在线化</h4>
+        <p class="dim">情况描述、风险确认、处置计划、审核结论、通知待办全链路在线协同；每个动作写操作日志，全程留痕可审计。</p>
+        <div class="card-tags">
+          <span class="tag-pill green">在线协同</span>
+          <span class="tag-pill green">待办通知</span>
+          <span class="tag-pill green">操作日志</span>
+        </div>
+      </div>
+    </div>
+    <div class="grid g3 mt-l" style="gap:10px">
+      <div class="card stat-card"><div class="n">9</div><div class="l">复刻页面</div><div class="time-detail">首页、风险列表、详情、处置、企业、指标等</div></div>
+      <div class="card stat-card"><div class="n">14</div><div class="l">业务弹窗类型</div><div class="time-detail">描述、确认、计划、调整、消除、审核等</div></div>
+      <div class="card stat-card"><div class="n">81</div><div class="l">复用数据表</div><div class="time-detail">覆盖风险、企业、指标、用户、通知、日志</div></div>
+    </div>
+    <div class="notes">
+      定位页用"三个穿透"+"协同在线化"概括系统核心价值，并用 9/14/81 三个数字快速建立可感知的规模。
+    </div>
+  </section>
+
+  <!-- 4. Core Business Flow -->
+  <section class="slide" data-title="Flow">
+    <span class="section-num">03</span>
+    <p class="num-tag">核心业务流程</p>
+    <h2 class="h2 mt-s">从外部风险推送到风险消除的完整闭环</h2>
+    <div class="grid g2 mt-l" style="gap:24px">
+      <div class="card flow-step" data-step="1">
+        <h4>风险接入</h4>
+        <p>企查查推送原始风险动态，系统保存报文、MQ 异步解析、匹配企业与指标，生成风险记录。支持幂等去重与失败追溯。</p>
+        <div class="card-tags">
+          <span class="tag-pill blue">MQ 异步</span>
+          <span class="tag-pill blue">幂等去重</span>
+          <span class="tag-pill blue">失败追溯</span>
+        </div>
+      </div>
+      <div class="card flow-step" data-step="2">
+        <h4>情况描述</h4>
+        <p>二级企业管理主体填写发生原因、决策机构、附件、是否报备集团；3 天到期自动提交，逾期触发待办提醒。</p>
+        <div class="card-tags">
+          <span class="tag-pill purple">3 天到期</span>
+          <span class="tag-pill purple">自动提交</span>
+          <span class="tag-pill purple">待办提醒</span>
+        </div>
+      </div>
+      <div class="card flow-step" data-step="3">
+        <h4>风险确认</h4>
+        <p>主责部门判定"是否为风险"；判定结论均提交法务风控部审核，无自动确认分支。审核不通过回退补充。</p>
+        <div class="card-tags">
+          <span class="tag-pill red">主责确认</span>
+          <span class="tag-pill red">法务审核</span>
+          <span class="tag-pill red">不通过回退</span>
+        </div>
+      </div>
+      <div class="card flow-step" data-step="4">
+        <h4>处置计划</h4>
+        <p>主责部门制定计划目标、步骤、责任人；管理主体执行进度、上传附件、标记完成。支持计划变更与等级调整。</p>
+        <div class="card-tags">
+          <span class="tag-pill orange">多步骤</span>
+          <span class="tag-pill orange">责任人</span>
+          <span class="tag-pill orange">进度跟踪</span>
+        </div>
+      </div>
+      <div class="card flow-step" data-step="5">
+        <h4>完成审核</h4>
+        <p>管理主体完成处置后自动提交审核；主责部门通过后自动发起风险消除申请。审核不通过回退到处置阶段。</p>
+        <div class="card-tags">
+          <span class="tag-pill green">自动提交</span>
+          <span class="tag-pill green">消除申请</span>
+          <span class="tag-pill green">回退处置</span>
+        </div>
+      </div>
+      <div class="card flow-step" data-step="6">
+        <h4>风险消除</h4>
+        <p>法务风控部审核消除申请；通过后风险状态变为"已消除"，并触发全量通知。不通过回退至"已确认"继续处置。</p>
+        <div class="card-tags">
+          <span class="tag-pill blue">法务终审</span>
+          <span class="tag-pill blue">状态变更</span>
+          <span class="tag-pill blue">全量通知</span>
+        </div>
+      </div>
+    </div>
+    <div class="grid g3 mt-l" style="gap:10px">
+      <div class="card card-soft"><h4>驱动方式</h4><p class="dim">MQ 推送 + 用户操作 + 定时任务共同驱动状态流转。</p></div>
+      <div class="card card-soft"><h4>审核规则</h4><p class="dim">所有确认/关闭/消除/等级调整均须法务风控部人工审核。</p></div>
+      <div class="card card-soft"><h4>通知机制</h4><p class="dim">关键状态变更后按企业链路、关联部门、接收人精准发送通知。</p></div>
+    </div>
+    <div class="notes">
+      这是业务核心页。用 6 个步骤+ 3 个规则卡片展示完整闭环，体现系统复杂度和业务深度。
+    </div>
+  </section>
+
+  <!-- 5. State & Roles -->
+  <section class="slide" data-title="State & Roles">
+    <span class="section-num">04</span>
+    <p class="num-tag">状态与角色</p>
+    <h2 class="h2 mt-s">状态流转 + 多方协作：规则复杂的企业级工作流</h2>
     <div class="grid g2 mt-l">
-      <div class="card card-hover"><h4>前端</h4><p class="dim">React 19 + TypeScript + Vite，组件、路由、状态、弹窗一体化实现；Playwright 覆盖 E2E。</p></div>
-      <div class="card card-hover"><h4>后端</h4><p class="dim">Clojure + Ring + Reitit + next-jdbc，基于既有 SQLite 数据库构建兼容 API，无需改表。</p></div>
-      <div class="card card-hover"><h4>工程化</h4><p class="dim">类型检查、生产构建、自动化测试、规格文档、进度报告全部在项目内闭环。</p></div>
-      <div class="card card-hover"><h4>AI 协作</h4><p class="dim">代码、SQL、规格、测试、报告、汇报 PPT 均由 AI 在统一上下文中持续生成与迭代。</p></div>
+      <div class="card role-blue">
+        <h4>风险主状态</h4>
+        <p class="dim mt-s">从"情况描述"到"已确认"需经主责部门确认和法务审核；最终通过消除或关闭审核结束。</p>
+        <div class="mt-s">
+          <span class="status-tag">情况描述</span><span class="status-tag">未确认</span><span class="status-tag">确认待审核</span><span class="status-tag active">已确认</span><span class="status-tag">消除待审核</span><span class="status-tag">已消除</span><span class="status-tag">已关闭</span>
+        </div>
+      </div>
+      <div class="card role-orange">
+        <h4>处置状态</h4>
+        <p class="dim mt-s">仅"已确认"风险进入处置；主责部门制定计划，管理主体执行，超期自动标记"已延期"。</p>
+        <div class="mt-s">
+          <span class="status-tag">未开始</span><span class="status-tag">进行中</span><span class="status-tag">已延期</span><span class="status-tag">完成待审核</span><span class="status-tag active">已完成</span>
+        </div>
+      </div>
+    </div>
+    <div class="grid g2 mt-l">
+      <div class="card role-card role-blue">
+        <h4>管理主体</h4>
+        <p class="dim">二级企业：填写风险描述、执行处置计划、维护进度与附件。</p>
+        <div class="card-tags">
+          <span class="tag-pill blue">填写描述</span>
+          <span class="tag-pill blue">执行计划</span>
+          <span class="tag-pill blue">上传附件</span>
+        </div>
+      </div>
+      <div class="card role-card role-purple">
+        <h4>主责部门</h4>
+        <p class="dim">确认风险、制定/变更处置计划、审核完成、发起等级调整。</p>
+        <div class="card-tags">
+          <span class="tag-pill purple">风险确认</span>
+          <span class="tag-pill purple">制定计划</span>
+          <span class="tag-pill purple">等级调整</span>
+        </div>
+      </div>
+      <div class="card role-card role-red">
+        <h4>法务风控部</h4>
+        <p class="dim">审核确认、消除、等级调整与关闭结论；拥有最终否决与回退权限。</p>
+        <div class="card-tags">
+          <span class="tag-pill red">终审确认</span>
+          <span class="tag-pill red">终审消除</span>
+          <span class="tag-pill red">关闭审核</span>
+        </div>
+      </div>
+      <div class="card role-card role-green">
+        <h4>战略投资中心</h4>
+        <p class="dim">集团直管企业与集团本部的处理权限主体；介入确认、处置与重大事项督导。</p>
+        <div class="card-tags">
+          <span class="tag-pill green">直管企业</span>
+          <span class="tag-pill green">重大事项督导</span>
+          <span class="tag-pill green">处置确认</span>
+        </div>
+      </div>
     </div>
     <div class="notes">
-      展示技术深度和选型理性。React/Clojure 双栈说明我们不拘泥于单一语言，能根据项目灵活选择。
+      合并状态与角色，说明系统包含复杂状态流转和多角色协同，业务规则不简单。
     </div>
   </section>
 
-  <!-- 7. Feature Loop -->
-  <section class="slide" data-title="Feature Loop">
-    <span class="section-num">06</span>
-    <p class="num-tag">功能闭环</p>
-    <h2 class="h2 mt-s">不是静态页面<br>是完整业务闭环</h2>
-    <div class="grid g2 mt-l" style="gap:28px">
-      <div class="card flow-step" data-step="1"><h4>风险发现</h4><p>风险信息列表接入真实数据库，支持 10 维组合筛选、分页、导出。</p></div>
-      <div class="card flow-step" data-step="2"><h4>风险确认</h4><p>支持"是/否风险"判定、原因提交、状态流转与权限控制。</p></div>
-      <div class="card flow-step" data-step="3"><h4>处置计划</h4><p>制定总目标、多步骤计划；更新进度、上传附件、查看完成情况。</p></div>
-      <div class="card flow-step" data-step="4"><h4>多级审核</h4><p>风险状态、等级变化、处置完成、动态调整 4 类审核入口。</p></div>
-    </div>
-    <div class="notes">
-      用流程图方式展示业务能力。强调"闭环"二字，让客户知道交付的是可用系统，不是 demo。
-    </div>
-  </section>
-
-  <!-- 8. AI Architecture Understanding -->
-  <section class="slide" data-title="AI Architecture">
-    <span class="section-num">07</span>
-    <p class="num-tag">AI 快速理解项目</p>
-    <h2 class="h2 mt-s">AI 不只是能写代码<br>更能快速理解复杂项目</h2>
-    <p class="lede mt-m">以另一个真实项目 <strong>renren-security</strong> 为例，我们在短时间内让 AI 完成架构梳理，输出可落地的 C4 模型文档，帮助团队快速掌握项目全貌。</p>
+  <!-- 6. Key Metrics -->
+  <section class="slide" data-title="Metrics">
+    <span class="section-num">05</span>
+    <p class="num-tag">交付成果</p>
+    <h2 class="h2 mt-s">高效交付：2 个自然日，11 个有效小时</h2>
     <div class="grid g3 mt-l">
-      <div class="card"><h4>系统上下文</h4><p class="dim">明确用户角色、外部依赖、核心功能：RBAC 权限、代码生成、定时任务、云存储。</p></div>
-      <div class="card"><h4>容器架构</h4><p class="dim">梳理 6 大容器：renren-admin、renren-api、renren-generator、renren-ui、MySQL、Redis。</p></div>
-      <div class="card"><h4>组件关系</h4><p class="dim">拆解 10 个核心组件及其依赖矩阵：安全认证、系统管理、日志、定时任务、云存储等。</p></div>
+      <div class="card stat-card">
+        <div class="n">11 h</div>
+        <div class="l">总有效开发时间</div>
+        <div class="time-detail">
+          08-07 09:00–15:00（6h）<br>
+          08-10 14:00–18:00（4h）<br>
+          08-12 09:00–10:00（1h）
+        </div>
+      </div>
+      <div class="card stat-card"><div class="n">4,175</div><div class="l">前端代码行</div><div class="time-detail">React 19 + TypeScript + Vite + CSS</div></div>
+      <div class="card stat-card"><div class="n">762</div><div class="l">后端代码行</div><div class="time-detail">Clojure + Ring/Reitit + 单元测试</div></div>
+      <div class="card stat-card"><div class="n">357</div><div class="l">SQL 代码行</div><div class="time-detail">兼容查询与接口 SQL</div></div>
+      <div class="card stat-card"><div class="n">31</div><div class="l">本地 API 路由</div><div class="time-detail">覆盖风险闭环与企业/指标管理</div></div>
+      <div class="card stat-card"><div class="n">81</div><div class="l">复用数据表</div><div class="time-detail">未改原库结构</div></div>
     </div>
-    <p class="dim mt-l" style="margin-top:40px">产出：10+ 份 C4 架构文档，覆盖 Context / Container / Component / Code 四级视角。</p>
+    <p class="dim mt-l" style="margin-top:28px">已实现 9 个页面、14 类业务弹窗、完整风险闭环链路；前端 <code>npm run build</code> 通过，后端 12 个断言 0 失败。</p>
     <div class="notes">
-      用 renren-security 的真实 C4 文档证明：AI 能快速消化陌生复杂项目。这对接手老系统、遗留系统改造特别有价值。
+      从业务功能过渡到数据。用精确时间+前后端分离的代码量建立可信度。强调"11小时"这个数字。
     </div>
   </section>
 
-  <!-- 9. AI Code Forensics -->
-  <section class="slide" data-title="AI Forensics">
-    <span class="section-num">08</span>
-    <p class="num-tag">AI 代码演化分析</p>
-    <h2 class="h2 mt-s">XRay 代码取证<br>让项目健康度一目了然</h2>
-    <p class="lede mt-m">通过 XRay 对 renren-security 进行代码演化取证分析，AI 自动识别热点文件、风险文件、单点拥有风险和模块耦合度，并给出整改优先级。</p>
-    <div class="grid g3 mt-l">
-      <div class="card stat-card"><div class="n">677</div><div class="l">热点文件<br>识别代码高频变更区域</div></div>
-      <div class="card stat-card"><div class="n">10+</div><div class="l">Top 风险文件<br>含主题、登录页、工具类</div></div>
-      <div class="card stat-card"><div class="n">100%</div><div class="l">单点拥有风险<br>关键文件由单一作者维护</div></div>
-    </div>
-    <p class="dim mt-l" style="margin-top:40px">产出：管理层摘要 + 技术分析 + 整改计划 + 重构指南 4 份报告，可直接纳入迭代复盘。</p>
-    <div class="notes">
-      XRay 报告证明我们不仅能写，还能"看懂"项目健康状况。对客户的遗留系统接力和技术债治理是强加分项。
-    </div>
-  </section>
-
-  <!-- 10. Efficiency Comparison -->
+  <!-- 9. Efficiency Comparison -->
   <section class="slide" data-title="Efficiency">
-    <span class="section-num">09</span>
+    <span class="section-num">06</span>
     <p class="num-tag">效率对比</p>
     <h2 class="h2 mt-s">传统交付 vs AI 工程化交付</h2>
     <div class="grid g2 mt-l">
       <div class="card" style="border:2px solid var(--border-strong)">
         <h4 style="color:var(--text-2)">传统模式估算</h4>
-        <div class="metric mt-s"><div class="n" style="font-size:48px;color:var(--text-2)">4–6 周</div></div>
-        <ul class="dim" style="margin-top:18px;padding-left:20px;line-height:1.9;font-size:15px">
-          <li>需求梳理与原型 1–2 周</li>
-          <li>前端/后端开发 3–4 周</li>
-          <li>联调与测试 1–2 周</li>
-          <li>频繁返工与沟通损耗</li>
+        <div class="metric mt-s"><div class="n" style="font-size:46px;color:var(--text-2)">4–6 周</div></div>
+        <ul class="dim" style="margin-top:14px;padding-left:18px;line-height:1.8;font-size:14px">
+          <li>需求梳理与原型：1–2 周，依赖大量会议往返</li>
+          <li>前端/后端开发：3–4 周，接口契约易反复修改</li>
+          <li>联调与测试：1–2 周，bug 集中爆发</li>
+          <li>频繁返工与沟通损耗，进度不透明</li>
         </ul>
+        <div class="card-tags" style="margin-top:14px">
+          <span class="tag-pill gray">需求反复</span>
+          <span class="tag-pill gray">接口易变</span>
+          <span class="tag-pill gray">bug 集中爆发</span>
+        </div>
       </div>
       <div class="card card-accent" style="background:var(--grad-soft);border:2px solid transparent">
         <h4 style="color:var(--accent)">AI 工程化交付</h4>
-        <div class="metric mt-s"><div class="n" style="font-size:48px">2 天</div></div>
-        <ul style="margin-top:18px;padding-left:20px;line-height:1.9;font-size:15px;color:var(--text-2)">
-          <li>快速理解并提取原系统规格</li>
-          <li>前后端代码同步生成与迭代</li>
-          <li>构建、测试、验证随开发持续完成</li>
-          <li>效率提升约 8–15 倍</li>
+        <div class="metric mt-s"><div class="n" style="font-size:46px">2 天</div></div>
+        <ul style="margin-top:14px;padding-left:18px;line-height:1.8;font-size:14px;color:var(--text-2)">
+          <li>快速理解并提取原系统页面规格与数据库结构</li>
+          <li>前后端代码同步生成、迭代、构建与测试</li>
+          <li>每轮改动都可验证，规格文档与代码同步产出</li>
+          <li>效率提升约 8–15 倍，且风险全程可见</li>
         </ul>
+        <div class="card-tags" style="margin-top:14px">
+          <span class="tag-pill blue">规格提取</span>
+          <span class="tag-pill purple">同步生成</span>
+          <span class="tag-pill green">持续验证</span>
+        </div>
       </div>
     </div>
+    <div class="grid g3 mt-l" style="gap:10px">
+      <div class="card stat-card"><div class="n">11 h</div><div class="l">有效开发时间</div><div class="time-detail">含自动巡检与规格提取</div></div>
+      <div class="card stat-card"><div class="n">5,300+</div><div class="l">代码行</div><div class="time-detail">前后端 + SQL + 测试</div></div>
+      <div class="card stat-card"><div class="n">12 / 0</div><div class="l">测试断言 / 失败</div><div class="time-detail">后端测试持续通过</div></div>
+    </div>
     <div class="notes">
-      这是核心卖点页。用左右对比让客户直观感受到速度差异。注意表述是"估算"和"本项目实际"，保持诚实。
+      这是核心卖点页。用左右对比+数字卡片让客户直观感受到速度、质量与可验证性。
     </div>
   </section>
 
-  <!-- 11. AI Toolchain -->
+  <!-- 10. AI Toolchain -->
   <section class="slide" data-title="AI Toolchain">
-    <span class="section-num">10</span>
+    <span class="section-num">07</span>
     <p class="num-tag">AI 工具链</p>
-    <h2 class="h2 mt-s">AI 不是单点工具<br>而是贯穿交付全链路</h2>
+    <h2 class="h2 mt-s">AI 不是单点工具，而是贯穿交付全链路</h2>
     <div class="grid g3 mt-l">
-      <div class="card"><h4>理解</h4><p class="dim">自动巡检原系统页面，提取 DOM、CSS、文案、素材链接与交互行为。</p></div>
-      <div class="card"><h4>设计</h4><p class="dim">沉淀 4 份组件规格文档，明确弹窗状态、字段、接口契约。</p></div>
-      <div class="card"><h4>开发</h4><p class="dim">生成 4,000+ 行前端组件与 700+ 行后端 API，自动处理类型与路由。</p></div>
-      <div class="card"><h4>验证</h4><p class="dim">持续运行 npm build 与后端测试，快速发现并修复问题。</p></div>
-      <div class="card"><h4>沉淀</h4><p class="dim">自动生成进度报告、效率实证报告，以及您现在看到的这份 PPT。</p></div>
-      <div class="card"><h4>协作</h4><p class="dim">人类把控业务边界与质量，AI 承担重复性实现与文档工作。</p></div>
+      <div class="card role-blue">
+        <h4>理解</h4>
+        <p class="dim">自动巡检原系统页面，提取 DOM 结构、计算后 CSS、真实文案、素材链接、交互行为与页面截图，形成可复现的规格。</p>
+        <div class="card-tags">
+          <span class="tag-pill blue">DOM 结构</span>
+          <span class="tag-pill blue">CSS 提取</span>
+          <span class="tag-pill blue">交互行为</span>
+        </div>
+      </div>
+      <div class="card role-purple">
+        <h4>设计</h4>
+        <p class="dim">沉淀 4 份组件规格文档，明确 14 类弹窗状态、字段规则、校验逻辑与接口契约，供开发直接对照。</p>
+        <div class="card-tags">
+          <span class="tag-pill purple">14 类弹窗</span>
+          <span class="tag-pill purple">字段规则</span>
+          <span class="tag-pill purple">接口契约</span>
+        </div>
+      </div>
+      <div class="card role-red">
+        <h4>开发</h4>
+        <p class="dim">生成 4,000+ 行前端组件与 700+ 行后端 API，自动处理 TypeScript 类型、路由、SQL 查询与测试断言。</p>
+        <div class="card-tags">
+          <span class="tag-pill red">React 19</span>
+          <span class="tag-pill red">Clojure</span>
+          <span class="tag-pill red">测试断言</span>
+        </div>
+      </div>
+      <div class="card role-orange">
+        <h4>验证</h4>
+        <p class="dim">持续运行 npm build 与后端 Clojure 测试，快速发现类型错误、接口不一致与样式回归问题。</p>
+        <div class="card-tags">
+          <span class="tag-pill orange">npm build</span>
+          <span class="tag-pill orange">后端测试</span>
+          <span class="tag-pill orange">样式回归</span>
+        </div>
+      </div>
+      <div class="card role-green">
+        <h4>沉淀</h4>
+        <p class="dim">自动生成进度报告、效率实证报告、架构分析文档、代码取证报告，以及您现在看到的这份 PPT。</p>
+        <div class="card-tags">
+          <span class="tag-pill green">进度报告</span>
+          <span class="tag-pill green">实证报告</span>
+          <span class="tag-pill green">PPT</span>
+        </div>
+      </div>
+      <div class="card role-blue">
+        <h4>协作</h4>
+        <p class="dim">人类把控业务边界、架构质量与最终审核；AI 承担重复性实现、文档生成与数据整理工作。</p>
+        <div class="card-tags">
+          <span class="tag-pill blue">人类把控</span>
+          <span class="tag-pill blue">AI 实现</span>
+          <span class="tag-pill blue">质量守门</span>
+        </div>
+      </div>
+    </div>
+    <div class="grid g3 mt-l" style="gap:10px">
+      <div class="card card-soft"><h4>克隆巡检</h4><p class="dim">clone-website skill 自动登录原系统、逐页截图、提取结构与规格。</p></div>
+      <div class="card card-soft"><h4>架构理解</h4><p class="dim">C4 architecture skill 从代码反推系统上下文、容器、组件与代码级实现。</p></div>
+      <div class="card card-soft"><h4>代码取证</h4><p class="dim">XRay skill 分析代码演化，识别热点文件、风险点与模块耦合度。</p></div>
     </div>
     <div class="notes">
       强调"工具链全面"。连 PPT 本身都是 AI 产出的，这是最强的自证。让客户相信我们不只会写代码。
     </div>
   </section>
 
-  <!-- 12. Customer Value -->
-  <section class="slide" data-title="Value">
-    <span class="section-num">11</span>
-    <p class="num-tag">客户价值</p>
-    <h2 class="h2 mt-s">这能为您的业务带来什么？</h2>
-    <div class="grid g3 mt-l">
-      <div class="card card-hover"><h4>快速验证想法</h4><p class="dim">原有系统升级、新产品原型、内部工具改造，都可以在数天内看到可运行版本。</p></div>
-      <div class="card card-hover"><h4>降低沟通成本</h4><p class="dim">规格文档、截图、可运行代码同时产出，减少需求往返，缩短决策链。</p></div>
-      <div class="card card-hover"><h4>保护既有资产</h4><p class="dim">无需改动现有数据库结构，基于原表构建新接口，降低迁移风险。</p></div>
-      <div class="card card-hover"><h4>可预测交付</h4><p class="dim">持续构建与测试保证每轮改动都可验证，进度透明、风险可见。</p></div>
-      <div class="card card-hover"><h4>工程能力复用</h4><p class="dim">沉淀的规格、组件、API 模式可直接复用到后续项目，越交付越快。</p></div>
-      <div class="card card-hover"><h4>人机协同质量</h4><p class="dim">AI 负责高效实现，资深工程师把控架构与业务边界，质量不妥协。</p></div>
+  <!-- 11. AI Architecture Understanding -->
+  <section class="slide" data-title="AI Architecture">
+    <span class="section-num">08</span>
+    <p class="num-tag">AI 快速理解项目</p>
+    <h2 class="h2 mt-s">AI 不只是能写代码，更能快速理解复杂项目</h2>
+    <p class="lede mt-m">以另一个真实项目 <strong>renren-security</strong> 为例，AI 在短时间内完成架构梳理，输出可落地的 C4 模型文档，帮助团队快速掌握项目全貌。</p>
+    <div class="grid g4 mt-l">
+      <div class="card role-blue">
+        <h4>系统上下文</h4>
+        <p class="dim">明确用户角色、外部依赖、核心功能：RBAC 权限、代码生成、定时任务、云存储、OSS、日志与系统监控。</p>
+        <div class="card-tags">
+          <span class="tag-pill blue">RBAC</span>
+          <span class="tag-pill blue">代码生成</span>
+          <span class="tag-pill blue">定时任务</span>
+        </div>
+      </div>
+      <div class="card role-purple">
+        <h4>容器架构</h4>
+        <p class="dim">梳理 6 大容器：renren-admin、renren-api、renren-generator、renren-ui、MySQL、Redis，及其数据流向。</p>
+        <div class="card-tags">
+          <span class="tag-pill purple">6 容器</span>
+          <span class="tag-pill purple">MySQL</span>
+          <span class="tag-pill purple">Redis</span>
+        </div>
+      </div>
+      <div class="card role-red">
+        <h4>组件关系</h4>
+        <p class="dim">拆解 10 个核心组件及依赖矩阵：安全认证、系统管理、日志、定时任务、云存储、API 网关等。</p>
+        <div class="card-tags">
+          <span class="tag-pill red">10 组件</span>
+          <span class="tag-pill red">依赖矩阵</span>
+          <span class="tag-pill red">API 网关</span>
+        </div>
+      </div>
+      <div class="card role-green">
+        <h4>代码级文档</h4>
+        <p class="dim">覆盖 common、security、sys、log、job、oss、generator、api 等模块的实现细节与关键接口。</p>
+        <div class="card-tags">
+          <span class="tag-pill green">8+ 模块</span>
+          <span class="tag-pill green">实现细节</span>
+          <span class="tag-pill green">关键接口</span>
+        </div>
+      </div>
+    </div>
+    <div class="grid g4 mt-l" style="gap:10px">
+      <div class="card stat-card"><div class="n">10+</div><div class="l">C4 文档</div><div class="time-detail">Context / Container / Component / Code</div></div>
+      <div class="card stat-card"><div class="n">6</div><div class="l">容器</div><div class="time-detail">admin / api / generator / ui / db / cache</div></div>
+      <div class="card stat-card"><div class="n">10</div><div class="l">核心组件</div><div class="time-detail">含安全认证、系统管理、日志等</div></div>
+      <div class="card stat-card"><div class="n">8+</div><div class="l">代码模块</div><div class="time-detail">模块接口与依赖清单</div></div>
     </div>
     <div class="notes">
-      从"我们做了什么"转向"对客户有什么用"。六个价值点覆盖速度、成本、风险、质量。
+      用 renren-security 的真实 C4 文档证明：AI 能快速消化陌生复杂项目。这对接手老系统、遗留系统改造特别有价值。
     </div>
   </section>
 
-  <!-- 11. CTA / Thanks -->
+  <!-- 12. AI Code Forensics -->
+  <section class="slide" data-title="AI Forensics">
+    <span class="section-num">09</span>
+    <p class="num-tag">AI 代码演化分析</p>
+    <h2 class="h2 mt-s">XRay 代码取证：让项目健康度一目了然</h2>
+    <p class="lede mt-m">通过 XRay 对 renren-security 进行代码演化取证分析，AI 自动识别热点文件、风险文件、单点拥有风险与模块耦合度，并给出整改优先级。</p>
+    <div class="grid g4 mt-l">
+      <div class="card stat-card role-blue">
+        <div class="n">20+</div>
+        <div class="l">热点文件</div>
+        <div class="time-detail">识别代码高频变更区域，聚焦维护成本最高的模块</div>
+      </div>
+      <div class="card stat-card role-purple">
+        <div class="n">10+</div>
+        <div class="l">Top 风险文件</div>
+        <div class="time-detail">含主题、登录页、工具类等关键单点</div>
+      </div>
+      <div class="card stat-card role-red">
+        <div class="n">100%</div>
+        <div class="l">单点拥有风险</div>
+        <div class="time-detail">关键文件由单一作者维护，存在人员交接风险</div>
+      </div>
+      <div class="card stat-card role-green">
+        <div class="n">4</div>
+        <div class="l">分析报告</div>
+        <div class="time-detail">管理层摘要 / 技术分析 / 整改计划 / 重构指南</div>
+      </div>
+    </div>
+    <div class="grid g2 mt-l" style="gap:10px">
+      <div class="card card-soft">
+        <h4>能发现什么</h4>
+        <p class="dim">高频变更热点、长期未动但关键的"冷文件"、跨模块耦合度、单一作者维护风险、重复代码与临时补丁堆积。</p>
+        <div class="card-tags">
+          <span class="tag-pill blue">热点文件</span>
+          <span class="tag-pill purple">冷文件</span>
+          <span class="tag-pill red">单点风险</span>
+          <span class="tag-pill orange">耦合度</span>
+        </div>
+      </div>
+      <div class="card card-soft">
+        <h4>能做什么</h4>
+        <p class="dim">为迭代复盘提供数据支撑；为重构排优先级；为知识转移识别关键文件；为新成员快速掌握项目健康度。</p>
+        <div class="card-tags">
+          <span class="tag-pill green">迭代复盘</span>
+          <span class="tag-pill green">重构优先级</span>
+          <span class="tag-pill green">知识转移</span>
+        </div>
+      </div>
+    </div>
+    <div class="notes">
+      XRay 报告证明我们不仅能写，还能"看懂"项目健康状况。对客户的遗留系统接力和技术债治理是强加分项。
+    </div>
+  </section>
+
+  <!-- 13. Customer Value -->
+  <section class="slide" data-title="Value">
+    <span class="section-num">10</span>
+    <p class="num-tag">客户价值</p>
+    <h2 class="h2 mt-s">这能为您的业务带来什么？</h2>
+    <div class="grid g3 mt-l">
+      <div class="card card-hover role-blue">
+        <h4>快速验证想法</h4>
+        <p class="dim">原有系统升级、新产品原型、内部工具改造，都可以在数天内看到可运行版本，缩短决策周期，降低试错成本。</p>
+        <div class="card-tags">
+          <span class="tag-pill blue">2 天验证</span>
+          <span class="tag-pill blue">降低试错</span>
+        </div>
+      </div>
+      <div class="card card-hover role-purple">
+        <h4>降低沟通成本</h4>
+        <p class="dim">规格文档、界面截图、可运行代码同步产出，减少需求往返，让业务、技术、管理层在同一事实基础上讨论。</p>
+        <div class="card-tags">
+          <span class="tag-pill purple">文档同步</span>
+          <span class="tag-pill purple">减少往返</span>
+        </div>
+      </div>
+      <div class="card card-hover role-green">
+        <h4>保护既有资产</h4>
+        <p class="dim">无需改动现有数据库结构，基于原表构建新接口，降低迁移风险，特别适合历史数据重、系统耦合深的场景。</p>
+        <div class="card-tags">
+          <span class="tag-pill green">原库不动</span>
+          <span class="tag-pill green">降低迁移风险</span>
+        </div>
+      </div>
+      <div class="card card-hover role-orange">
+        <h4>可预测交付</h4>
+        <p class="dim">持续构建与测试保证每轮改动都可验证，进度透明、风险可见；避免项目末期集中爆发的返工与延期。</p>
+        <div class="card-tags">
+          <span class="tag-pill orange">持续验证</span>
+          <span class="tag-pill orange">进度透明</span>
+        </div>
+      </div>
+      <div class="card card-hover role-blue">
+        <h4>工程能力复用</h4>
+        <p class="dim">沉淀的规格、组件、API 模式可直接复用到后续项目；每个项目结束时都会留下可继承的工程资产。</p>
+        <div class="card-tags">
+          <span class="tag-pill blue">组件复用</span>
+          <span class="tag-pill blue">越交付越快</span>
+        </div>
+      </div>
+      <div class="card card-hover role-red">
+        <h4>人机协同质量</h4>
+        <p class="dim">AI 负责高效实现与文档生成，资深工程师把控架构与业务边界；速度提升的同时质量不妥协。</p>
+        <div class="card-tags">
+          <span class="tag-pill red">AI 效率</span>
+          <span class="tag-pill red">人的质量把关</span>
+        </div>
+      </div>
+    </div>
+    <div class="grid g3 mt-l" style="gap:10px">
+      <div class="card stat-card"><div class="n">2 天</div><div class="l">可运行验证</div></div>
+      <div class="card stat-card"><div class="n">8–15×</div><div class="l">效率提升</div></div>
+      <div class="card stat-card"><div class="n">0 次</div><div class="l">数据库迁移</div></div>
+    </div>
+    <div class="notes">
+      从"我们做了什么"转向"对客户有什么用"。六个价值点+三个数字，覆盖速度、成本、风险、质量。
+    </div>
+  </section>
+
+  <!-- 14. CTA / Thanks -->
   <section class="slide center tc" data-title="Thanks">
     <div class="cover-bg"></div>
     <div>
@@ -250,7 +672,6 @@
       <p class="lede mt-m" style="margin:24px auto 0;max-width:50ch">选择一个现有页面或模块，我们将在 2 天内交付可运行的本地版本、规格文档与验收报告，作为合作的第一个实证。</p>
       <div class="row mt-l" style="justify-content:center;gap:24px;flex-wrap:wrap">
         <span class="pill pill-accent">预约 30 分钟方案沟通</span>
-        
       </div>
       <p class="dim mt-l" style="margin-top:48px;font-size:15px">本 PPT 同样由 AI 生成 · 2026-08-12</p>
     </div>

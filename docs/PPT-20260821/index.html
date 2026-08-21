@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 软件工程能力实证与试点建议 · 15 页</title>
+<style>
+  :root {
+    --bg: #0b0d10;
+    --text: #e6edf3;
+    --text-dim: #8b949e;
+    --accent: #58a6ff;
+    --chrome-bg: rgba(0, 0, 0, 0.55);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== deck & slides ===== */
+  .deck { position: fixed; inset: 0; }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.35s ease;
+    z-index: 0;
+  }
+
+  .slide.is-active {
+    opacity: 1;
+    visibility: visible;
+    z-index: 1;
+  }
+
+  .slide img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .slide.is-active img {
+    animation: slide-in 0.4s ease both;
+  }
+
+  @keyframes slide-in {
+    from { opacity: 0; transform: scale(0.98); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  /* ===== speaker notes: hidden on slide, only in presenter view ===== */
+  .slide .notes { display: none; }
+
+  /* ===== chrome: progress bar ===== */
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 100;
+  }
+  .progress-bar span {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, #58a6ff, #bc8cff);
+    transition: width 0.25s ease;
+  }
+
+  /* ===== chrome: slide number ===== */
+  .slide-number {
+    position: fixed;
+    right: 18px;
+    bottom: 14px;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: var(--text-dim);
+    background: var(--chrome-bg);
+    padding: 5px 12px;
+    border-radius: 999px;
+    z-index: 100;
+    font-variant-numeric: tabular-nums;
+    backdrop-filter: blur(6px);
+  }
+  .slide-number b { color: var(--text); font-weight: 700; }
+
+  /* ===== chrome: hint bar ===== */
+  .hint-bar {
+    position: fixed;
+    left: 18px;
+    bottom: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-size: 11px;
+    color: var(--text-dim);
+    z-index: 100;
+    transition: opacity 0.4s ease;
+  }
+  .hint-bar kbd {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: "SF Mono", Menlo, monospace;
+    font-size: 10px;
+    color: var(--text);
+  }
+  .hint-bar.hidden { opacity: 0; pointer-events: none; }
+
+  /* ===== nav arrows (click zones) ===== */
+  .nav-zone {
+    position: fixed;
+    top: 0; bottom: 0;
+    width: 18%;
+    z-index: 50;
+    cursor: pointer;
+  }
+  .nav-zone.prev { left: 0; }
+  .nav-zone.next { right: 0; }
+
+  .nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    color: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.25s ease, background 0.2s ease;
+    pointer-events: none;
+  }
+  .nav-zone.prev .nav-arrow { left: 22px; }
+  .nav-zone.next .nav-arrow { right: 22px; }
+  .nav-zone:hover .nav-arrow { opacity: 1; }
+  .nav-arrow:hover { background: rgba(88, 166, 255, 0.25); }
+
+  /* ===== overview grid ===== */
+  .overview {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 6, 8, 0.94);
+    z-index: 200;
+    overflow-y: auto;
+    padding: 48px;
+    display: none;
+  }
+  .overview.open { display: block; }
+
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 18px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  .overview .thumb {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    background: #14161a;
+    border: 2px solid transparent;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+  .overview .thumb:hover { transform: translateY(-3px); }
+  .overview .thumb.current { border-color: var(--accent); }
+  .overview .thumb img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .overview .thumb .num {
+    position: absolute;
+    top: 8px; left: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+
+  .overview .close-hint {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 12px;
+    margin-top: 22px;
+  }
+  .overview .close-hint kbd {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: "SF Mono", monospace;
+    font-size: 10px;
+  }
+
+  /* preview-only mode (?preview=N): hide chrome, show only one slide */
+  html[data-preview="1"] .progress-bar,
+  html[data-preview="1"] .slide-number,
+  html[data-preview="1"] .hint-bar,
+  html[data-preview="1"] .nav-zone,
+  html[data-preview="1"] .overview { display: none !important; }
+  html[data-preview="1"] .slide { padding: 0; }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <section class="slide is-active" data-title="结论前置">
+    <img src="ChatGPT Image 2026年8月16日 15_58_16 (1).png" alt="第 1 页">
+    <aside class="notes">
+      <p>各位好，今天这个汇报，我先<strong>把结论放在最前面</strong>：我们做了三个真实项目，已经证明 <strong>AI 多 Agent 能进入真实的软件工程环节</strong>——系统理解、规格形成、实现、测试、Review、交接，这些环节它都能参与。</p>
+      <p>具体看三个项目：一个是<strong>网站快速复刻</strong>，一个是<strong>穿透式监控平台的复杂后台复刻</strong>，还有一个是 <strong>renren-security 旧系统的分析治理</strong>。</p>
+      <p>关键证据我先摆几个数字：<strong>4 小时</strong>完成一个网站、<strong>11 小时</strong>复刻一个后台、<strong>81 张表、757 条风险、19/19 的 E2E 全部通过</strong>。</p>
+      <p>所以我的<strong>建议</strong>是：选 1 个真实业务模块，启动一个 <strong>4 周的受控 Pilot</strong>，用真实任务验证效率、质量、安全和团队的采用价值。</p>
+      <p>接下来我把这四件事展开讲，最后再回到怎么落地。</p>
+    </aside>
+  </section>
+
+  <section class="slide" data-title="四项可复用能力">
+    <img src="ChatGPT Image 2026年8月16日 15_58_16 (2).png" alt="第 2 页">
+    <aside class="notes">
+      <p>先说结论：三个项目做下来，我们沉淀出了<strong>四项可复用的能力</strong>，不是一次性的 Demo。</p>
+      <p><strong>第一，快速理解系统</strong>——页面、代码、数据结构、历史资产，可以并行分析，产出 C4 文档、XRay 分析、既有系统巡检。</p>
+      <p><strong>第二，把事实转成规格</strong>——先形成页面、字段、状态、接口和验收条件，再进入实现，避免上来就瞎写代码。</p>
+      <p><strong>第三，并行完成工程任务</strong>——研究、实现、数据适配、测试、文档，拆开并行跑，19/19 的 E2E 就是这么来的。</p>
+      <p><strong>第四，用工程治理约束 AI</strong>——Build、Test、Review、Merge Gate、人工责任，一个都不能少。</p>
+      <p>三个项目分别验证了这些能力：机器人项目是<strong>快速复刻</strong>，穿透平台是<strong>复杂业务复刻</strong>，renren-security 是<strong>遗留系统治理</strong>。</p>
+      <p>记住一句话：这不是单点 Demo 的偶然成功，是<strong>一套可复制的软件工程能力模型</strong>。下面我讲它要回答什么企业问题。</p>
+    </aside>
+  </section>
+
+  <section class="slide" data-title="企业核心问题">
+    <img src="ChatGPT Image 2026年8月16日 15_58_16 (3).png" alt="第 3 页">
+    <aside class="notes">
+      <p>这一页讲的是：企业真正关心的，从来不是<strong>"AI 能不能写代码"</strong>，而是<strong>"它能不能进入真实工程流程、并且被管理起来"</strong>。</p>
+      <p>技术负责人问的是：输出可不可信、能不能缩短周期、会不会失去架构和代码的控制权、返工会不会变多。</p>
+      <p>研发负责人问的是：怎么跟现有开发流程融合、能不能沉淀成团队的方法。</p>
+      <p>信息化负责人最担心<strong>安全和合规</strong>：源码、模型、数据出不出域，权限和日志怎么管，能不能私有化。</p>
+      <p>项目管理者关心的是：范围怎么定、进度怎么跟、验收标准和责任边界在哪。</p>
+      <p>所以我们的<strong>回答</strong>很明确：不是单点插件，是<strong>完整工程闭环</strong>；不看代码生成，看<strong>可运行、可验证、可交接</strong>的结果；不是放弃治理，是<strong>用治理约束 AI</strong>；不是一次演示，是<strong>受控的 Pilot 验证</strong>。</p>
+      <p>所以今天整场汇报，我按"结论前置——项目举证——方法解释——试点建议"这个结构来讲。</p>
+    </aside>
+  </section>
+
+  <section class="slide" data-title="三个项目的证据阶梯">
+    <img src="ChatGPT Image 2026年8月16日 15_58_16 (4).png" alt="第 4 页">
+    <aside class="notes">
+      <p>接下来进入项目举证。这三个项目不是随便选的，是一条<strong>从复刻到接手治理的证据阶梯</strong>。</p>
+      <p><strong>第一个是机器人项目</strong>：公开网站 1:1 复刻，验证"快速复刻"的能力。</p>
+      <p><strong>第二个是穿透式监控平台</strong>：复杂后台的复刻，而且是在严格的数据边界约束下做的，验证"复杂业务复刻"。</p>
+      <p><strong>第三个是 renren-security</strong>：旧系统的架构恢复和热点治理分析，验证"遗留系统理解和治理"。</p>
+      <p>大家看这几个数字，逐级递进：网站项目 2 个 Task、3 个 Agent、4 小时；后台项目 5 个 Task、5 个 Agent、11 小时、81 张表、757 条风险；旧系统项目做的是 677 个热点、churn 78,117 的分析。</p>
+      <p>三类场景分别证明了<strong>快速复刻、复杂业务复刻、遗留系统治理</strong>。下面我先把方法论讲清楚，再一个个看证据。</p>
+    </aside>
+  </section>
+
+  <section class="slide" data-title="方法论：完整工程闭环">
+    <img src="ChatGPT Image 2026年8月16日 15_58_16 (5).png" alt="第 5 页">
+    <aside class="notes">
+      <p>在展开每个项目之前，先说清楚我们的<strong>方法论</strong>：AI 必须进入完整的工程闭环，不能只停留在"生成一段代码"。</p>
+      <p>这个闭环有八个步骤：<strong>场景选择、系统理解与事实取证、规格形成与验收条件、任务拆解与 Agent 分工、实现与数据适配、Build/Test、人工 Review、交接沉淀</strong>。</p>
+      <p>我强调三个关键原则。</p>
+      <p>第一，<strong>规格先于代码</strong>——先有验收条件，再写代码。</p>
+      <p>第二，<strong>AI 的输出必须经过测试和人工责任确认</strong>，不能直接进生产。</p>
+      <p>第三，<strong>证据和交付物同步沉淀</strong>——代码、测试报告、文档，全部留档。</p>
+      <p>右边这些就是真实的证据：一段生成的代码，一份页面测试报告，执行时间、工具、通过率都写得很清楚。</p>
+      <p>一句话：<strong>AI 不是绕过工程，而是把工程活动更快、更可见地组织起来</strong>。下面用三个项目验证这条链路。</p>
+    </aside>
+  </section>
+
+  <section class="slide" data-title="实证一：网站快速复刻">
+    <img src="ChatGPT Image 2026年8月16日 15_58_16 (6).png" alt="第 6 页">
+    <aside class="notes">
+      <p>第一个实证：<strong>公开网站从巡检到可运行复刻</strong>。</p>
+      <p>项目对象是"青岛市具身智能机器人公共服务平台"。它的范围就是<strong>页面巡检、资源本地化、多路由页面复刻、首页和核心交互恢复</strong>。</p>
+      <p>执行事实很简单：2026-07-28，下午 2 点到 6 点，<strong>4 小时</strong>，2 个 Task、3 个 Agent，Human Touch 1.5 小时，Retry 1 次，DeepSeek 模型成本<strong>约 1 元</strong>。</p>
+      <p>交付证据：<strong>29 个本地静态资产、15 条发布路由</strong>，登录/注册弹窗和卡片交互都能用，并且已经做过现场展示验证。</p>
+      <p>这个项目说明：<strong>对公开站点类需求，AI 平台可以快速跑通"巡检——复刻——验证"的闭环</strong>。</p>
+      <p>但它只是"看得见"这一层，真正考验的是复杂业务。我们看下一个。</p>
+    </aside>
+  </section>
+
+  <section class="slide" data-title="实证二：复杂后台复刻">
+    <img src="ChatGPT Image 2026年8月16日 15_58_16 (7).png" alt="第 7 页">
+    <aside class="notes">
+      <p>第二个实证更关键：<strong>在严格的数据边界下，复刻一个复杂的企业管理后台</strong>。</p>
+      <p>穿透式监控平台，界面里有风险详情、状态流转、审核列表、操作审计，业务复杂度明显比网站高一大截。</p>
+      <p>但重点是<strong>边界约束</strong>，我们主动给自己上了四把锁：只能登录、只读浏览、界面取证；用既有的 test1.sqlite 结构和数据；禁止建表、迁移、改表；本地 API 只做演示闭环，不等于重建生产后端。</p>
+      <p>结果：<strong>11 小时、5 个 Task、5 个 Agent</strong>，Human Touch 4 小时，DeepSeek 成本约 10 元，81 张既有表、757 条风险记录，风险详情、状态流转、审核列表、操作审计全部可见，已远程验证。</p>
+      <p>这一页想说的是：这个项目的价值<strong>不只是"做出页面"，而是在数据边界可控的前提下，完成复杂后台的复刻</strong>。</p>
+      <p>那"像不像"是一回事，能不能跑、可不可信是另一回事——下一页看质量门禁。</p>
+    </aside>
+  </section>
+
+  <section class="slide" data-title="实证二：工程质量门禁">
+    <img src="ChatGPT Image 2026年8月16日 15_58_16 (8).png" alt="第 8 页">
+    <aside class="notes">
+      <p>很多人会问：AI 生成的页面看着像，但<strong>能不能用</strong>？这一页就是回答这个问题——<strong>AI 生成的结果必须通过工程质量门禁</strong>。</p>
+      <p>三个证据。第一是<strong>代码</strong>：前后端加 SQL 约 5270 行，前端 6 个 TS/TSX/CSS 文件，后端 5 个 Clojure 文件，定义了 31 条路径、38 个 HTTP 操作。</p>
+      <p>第二是<strong>自动化测试</strong>：前端 E2E 19 个用例，<strong>19/19 全部通过</strong>，npm run build 通过；后端领域测试 2 个测试、12 个断言，0 failure、0 error。</p>
+      <p>第三是<strong>业务闭环</strong>：风险信息的列表、搜索、筛选、分页、详情、审核场景都能用，每个页面用例都有独立的 API 返回状态。</p>
+      <p>我们的验收公式是：<strong>AI Generated + Accepted，而 Accepted 等于 Build Pass + Test Evidence + Human Review + 验收标准</strong>。</p>
+      <p>这类证据的意义在于：客户可以把 AI 的输出<strong>纳入工程治理，而不是停留在演示层</strong>。下面看第三个项目——它不写新功能，专门治理旧系统。</p>
+    </aside>
+  </section>
+
+  <section class="slide" data-title="实证三：旧系统分析治理">
+    <img src="ChatGPT Image 2026年8月16日 15_58_16 (9).png" alt="第 9 页">
+    <aside class="notes">
+      <p>第三个实证换了个方向：<strong>renren-security 项目，旧系统分析治理</strong>。</p>
+      <p>这个项目<strong>不做功能开发</strong>，重点证明一件事：AI 能不能快速恢复对一套旧系统的认知，并输出治理文档。</p>
+      <p>范围就是：读取既有源码、恢复 C4 四层架构文档、执行 XRay 代码和热点分析、形成后续团队能用的治理建议。</p>
+      <p>执行事实：2026-08-07 一天，1 个 Task、1 个 Agent，Human Touch 只要 0.5 小时，DeepSeek 成本约 0 元。</p>
+      <p>产出：多份 C4 架构和模块文档、XRay 窗口内 3 次提交的分析、总 churn 78,117、<strong>677 个热点/风险文件</strong>，热点目录集中在 renren-ui/src。</p>
+      <p>要特别说明一句：这个项目没有新增需求，汇报材料<strong>停留在分析和文档交付层，不宣称完成了功能修改</strong>。</p>
+      <p>它证明的是：面对遗留系统，AI 能先把<strong>"看不懂、接不住"的问题，转成可治理的文档和风险视图</strong>。三个项目讲完了，下一页我把它们串成一条链路。</p>
+    </aside>
+  </section>
+
+  <section class="slide" data-title="跨项目能力模型">
+    <img src="ChatGPT Image 2026年8月16日 15_58_16 (10).png" alt="第 10 页">
+    <aside class="notes">
+      <p>三个项目讲完，现在把它们<strong>串成一条链路</strong>——这就是跨项目验证出来的 AI 软件工程能力模型。</p>
+      <p>七个环节：<strong>系统理解、事实取证、规格形成、任务拆解、实现与数据适配、测试与 Review、交付沉淀</strong>。</p>
+      <p>三个项目各证明一段：机器人项目证明<strong>快速理解和页面复刻</strong>；穿透平台证明<strong>复杂业务约束下的实现和验证</strong>；renren-security 证明<strong>遗留系统理解、C4 架构恢复和风险洞察</strong>。</p>
+      <p>把这七个环节合起来，就是一条<strong>可复制的软件工程生产链</strong>——从理解到沉淀，形成可复用知识；从实现到适配，保证可维护；从自动化到人工，双重把关；从事实到报告，支撑可信交付。</p>
+      <p>所以结论不是"三个孤立 Demo"，而是<strong>不同场景、同一链路，验证了一套能力闭环</strong>。</p>
+      <p>那这条链路具体靠什么跑起来？下一页讲多 Agent 的组织方式。</p>
+    </aside>
+  </section>
+
+  <section class="slide" data-title="多 Agent 生产线">
+    <img src="ChatGPT Image 2026年8月16日 15_58_16 (11).png" alt="第 11 页">
+    <aside class="notes">
+      <p>这条链路的核心，不是开很多个聊天窗口，而是把任务变成一条<strong>可管理的工程生产线</strong>。</p>
+      <p>一个业务任务进来，先到一个 <strong>Planner / Orchestrator</strong>，它负责理解任务、拆解计划、分配到 Agent、跟踪进度和依赖。然后 <strong>Research、Coding、Test、Review</strong> 几个 Agent 各司其职，最后产出 Evidence / Report。</p>
+      <p>为什么比单一对话有效？三个原因：<strong>多任务隔离</strong>，每个 Agent 专注单一目标，减少上下文污染；<strong>上下文分层</strong>，按角色维护最小必要上下文，省 Token、更稳定；<strong>并行执行</strong>，研究、实现、测试并行推进，缩短端到端时间。</p>
+      <p>但人工控制点一个都不能少：<strong>任务定义、规格确认、Merge Gate、验收责任</strong>——做什么、做到什么程度、合不合并、验不验收，还是人来定。</p>
+      <p>一句话：<strong>多 Agent 的价值是把复杂工程活动组织起来，不是替代工程治理</strong>。那效率到底从哪来？下一页看数据。</p>
+    </aside>
+  </section>
+
+  <section class="slide" data-title="效率来源与证据">
+    <img src="ChatGPT Image 2026年8月16日 15_58_16 (12).png" alt="第 12 页">
+    <aside class="notes">
+      <p>这一页回答"效率从哪来"。提效<strong>不是来自一句提示词</strong>，而是来自工程组织方式的变化。</p>
+      <p>有五个机制：<strong>并行化</strong>，多线任务同时跑；<strong>上下文外显</strong>，文档、代码结构、风险信息结构化沉淀；<strong>任务隔离</strong>，把复杂工作拆成独立模块；<strong>自动化验证</strong>，用测试和静态分析快速验证；<strong>人工聚焦</strong>，把人的时间放到决策、例外处理和风险评估上。</p>
+      <p>看右边的对比表：网站项目 4 小时、后台 11 小时、旧系统一天；Human Touch 分别是 1.5 小时、4 小时、0.5 小时；成本约 1 元、10 元、0 元。</p>
+      <p>当前已经证明的是：<strong>AI 能显著缩短系统理解、后台复刻和验证准备的时间</strong>。</p>
+      <p>但我要说实话：<strong>最终的效率收益，还要在客户自己的真实项目里，跟基线做对比才能下结论</strong>。所以下一步必须讲治理，没有治理，效率再高也不敢用。</p>
+    </aside>
+  </section>
+
+  <section class="slide" data-title="企业级治理边界">
+    <img src="ChatGPT Image 2026年8月16日 15_58_16 (13).png" alt="第 13 页">
+    <aside class="notes">
+      <p>这一页是<strong>能不能进企业级流程的底线</strong>：质量、安全、责任，三条边界必须保留。</p>
+      <p><strong>质量治理</strong>：Build Pass、Test Evidence、Human Review、Acceptance Criteria、Merge Gate，一个不能少。</p>
+      <p><strong>安全边界</strong>：Repo 留在客户侧，源码、模型、数据的边界清晰，权限控制和日志留痕，支持私有化和受控接入。</p>
+      <p><strong>责任边界</strong>：需求责任、合并审批、最终验收，都归人。</p>
+      <p>右边这张图就是完整的落地方案：客户侧仓库、AI 代理运行时、模型、构建测试、证据存储、人工评审、合并，全在一条可控的链路上。</p>
+      <p>核心就一句话：<strong>AI 可以进入企业工程，但必须在可控边界内运行</strong>。</p>
+      <p>边界讲清楚了，下一步就是：怎么判断这件事到底值不值得规模化？</p>
+    </aside>
+  </section>
+
+  <section class="slide" data-title="规模化六类指标">
+    <img src="ChatGPT Image 2026年8月16日 15_58_16 (14).png" alt="第 14 页">
+    <aside class="notes">
+      <p>怎么判断值不值得规模化？我们不看代码行数，看<strong>工程结果和采用质量</strong>，一共六类指标。</p>
+      <p><strong>Flow 效率</strong>：Lead Time、Cycle Time、Throughput。</p>
+      <p><strong>AI 自治度</strong>：独立完成率、人工介入率、Retry 次数。</p>
+      <p><strong>Quality 质量</strong>：First-pass Acceptance、缺陷率、测试通过率。</p>
+      <p><strong>Human Touch</strong>：人工耗时、Review 耗时、交付触达时间。</p>
+      <p><strong>Governance 治理</strong>：日志留痕、合规性、可追溯性。</p>
+      <p><strong>Economics 经济性</strong>：模型成本、单任务成本、成果产出比。</p>
+      <p>落地工具是建立一张 <strong>AI Task Evidence Ledger</strong>——每个任务记 TaskID、Agent、起止时间、Human Touch、Test、Review、Acceptance、Cost。</p>
+      <p>只有形成<strong>任务级的证据账本</strong>，才能把试点结果变成可复核的管理结论。下一页讲具体的采用路径。</p>
+    </aside>
+  </section>
+
+  <section class="slide" data-title="采用路径与建议">
+    <img src="ChatGPT Image 2026年8月16日 15_58_16 (15).png" alt="第 15 页">
+    <aside class="notes">
+      <p>最后一页，落到行动。我的建议是：<strong>先从单点验证，再到规模化复制</strong>，五步走。</p>
+      <p>第一步<strong>场景筛选</strong>，从业务价值高、风险可控的模块里选试点；第二步<strong>基线建立</strong>，梳理现状、建立基线和验收标准；第三步<strong>受控验证</strong>，在受控环境里跑，确保安全和质量；第四步<strong>复盘评估</strong>，看效果和投入产出；第五步<strong>复制推广</strong>，把沉淀下来的资产和最佳实践复制到更多团队。</p>
+      <p>优先建议切入的，是<strong>旧系统维护小需求、后台审批/报表模块、界面复刻与测试补齐、文档恢复与系统理解</strong>这些风险可控的场景。</p>
+      <p>不建议第一批碰的，是<strong>核心交易主链路、高耦合大规模重构、安全边界不清晰、需求长期频繁变动又没有基线</strong>的场景。</p>
+      <p>总的原则就一句：<strong>先验证能不能稳定进入工程流程，再验证值不值得规模化复制</strong>。</p>
+      <p>我的汇报就到这里。核心结论是：能力已经验证，下一步是<strong>启动一个 4 周的受控 Pilot</strong>，用真实任务说话。谢谢大家，欢迎提问。</p>
+    </aside>
+  </section>
+
+</div>
+
+<div class="progress-bar"><span id="bar-fill"></span></div>
+<div class="slide-number" id="slide-number"><b id="num-cur">1</b> / <span id="num-total">15</span></div>
+
+<div class="hint-bar" id="hint-bar">
+  <span><kbd>←</kbd> <kbd>→</kbd> 翻页</span>
+  <span><kbd>S</kbd> 演讲者视图</span>
+  <span><kbd>F</kbd> 全屏</span>
+  <span><kbd>O</kbd> 总览</span>
+  <span>点击左右两侧翻页</span>
+</div>
+
+<div class="nav-zone prev" id="zone-prev"><div class="nav-arrow">‹</div></div>
+<div class="nav-zone next" id="zone-next"><div class="nav-arrow">›</div></div>
+
+<div class="overview" id="overview">
+  <div class="overview-grid" id="overview-grid"></div>
+  <div class="close-hint">点击缩略图跳转 · 按 <kbd>Esc</kbd> 或 <kbd>O</kbd> 关闭</div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var deck = document.getElementById('deck');
+  var slides = Array.prototype.slice.call(deck.querySelectorAll('.slide'));
+  var total = slides.length;
+  var idx = 0;
+
+  var barFill = document.getElementById('bar-fill');
+  var numCur = document.getElementById('num-cur');
+  var numTotal = document.getElementById('num-total');
+  var overview = document.getElementById('overview');
+  var overviewGrid = document.getElementById('overview-grid');
+  var hintBar = document.getElementById('hint-bar');
+  numTotal.textContent = total;
+
+  /* ===== BroadcastChannel: audience window <-> presenter window ===== */
+  var CHANNEL_NAME = 'html-ppt-presenter-' + location.pathname;
+  var bc;
+  try { bc = new BroadcastChannel(CHANNEL_NAME); } catch (e) { bc = null; }
+
+  /* ===== preview-only mode (?preview=N) ===== */
+  var previewIdx = -1;
+  var m = /[?&]preview=(\d+)/.exec(location.search || '');
+  if (m) previewIdx = parseInt(m[1], 10) - 1;
+  var isPreview = previewIdx >= 0 && previewIdx < total;
+
+  if (isPreview) {
+    document.documentElement.setAttribute('data-preview', '1');
+    function showSlide(n) {
+      slides.forEach(function (s, i) {
+        var on = i === n;
+        s.classList.toggle('is-active', on);
+        s.style.visibility = on ? 'visible' : 'hidden';
+        s.style.opacity = on ? '1' : '0';
+      });
+    }
+    showSlide(previewIdx);
+    window.addEventListener('message', function (e) {
+      if (e.data && e.data.type === 'preview-goto') {
+        var n = parseInt(e.data.idx, 10);
+        if (n >= 0 && n < total) showSlide(n);
+      }
+    });
+    try { window.parent && window.parent.postMessage({ type: 'preview-ready' }, '*'); } catch (e) {}
+    return;
+  }
+
+  /* ===== overview grid build ===== */
+  slides.forEach(function (s, i) {
+    var img = s.querySelector('img');
+    var thumb = document.createElement('div');
+    thumb.className = 'thumb';
+    thumb.innerHTML =
+      '<img src="' + (img ? img.getAttribute('src') : '') + '" alt="">' +
+      '<span class="num">' + (i + 1) + '</span>';
+    thumb.addEventListener('click', function () { go(i); toggleOverview(false); });
+    overviewGrid.appendChild(thumb);
+  });
+
+  function markCurrent() {
+    var thumbs = overviewGrid.querySelectorAll('.thumb');
+    thumbs.forEach(function (t, i) { t.classList.toggle('current', i === idx); });
+  }
+
+  /* ===== navigation ===== */
+  function go(n, fromRemote) {
+    n = Math.max(0, Math.min(total - 1, n));
+    slides.forEach(function (s, i) { s.classList.toggle('is-active', i === n); });
+    idx = n;
+    barFill.style.width = ((n + 1) / total * 100) + '%';
+    numCur.textContent = n + 1;
+    markCurrent();
+
+    var hashTarget = '#/' + (n + 1);
+    if (location.hash !== hashTarget) {
+      history.replaceState(null, '', hashTarget);
+    }
+    if (!fromRemote && bc) bc.postMessage({ type: 'go', idx: n });
+  }
+
+  function next() { go(idx + 1); }
+  function prev() { go(idx - 1); }
+
+  if (bc) {
+    bc.onmessage = function (e) {
+      if (e.data && e.data.type === 'go' && typeof e.data.idx === 'number') {
+        go(e.data.idx, true);
+      }
+    };
+  }
+
+  function toggleOverview(force) {
+    var open = (force !== undefined) ? force : !overview.classList.contains('open');
+    overview.classList.toggle('open', open);
+    markCurrent();
+  }
+
+  function fullscreen() {
+    if (!document.fullscreenElement) {
+      if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+    } else {
+      if (document.exitFullscreen) document.exitFullscreen();
+    }
+  }
+
+  /* ===================== PRESENTER MODE ===================== */
+  var presenterWin = null;
+
+  function openPresenterWindow() {
+    if (presenterWin && !presenterWin.closed) { presenterWin.focus(); return; }
+
+    var deckUrl = location.protocol + '//' + location.host + location.pathname;
+    var slideMeta = slides.map(function (s, i) {
+      var note = s.querySelector('.notes');
+      return {
+        title: s.getAttribute('data-title') || ('第 ' + (i + 1) + ' 页'),
+        notes: note ? note.innerHTML : ''
+      };
+    });
+
+    var html = buildPresenterHTML(deckUrl, slideMeta, total, idx, CHANNEL_NAME);
+    presenterWin = window.open('', 'html-ppt-presenter', 'width=1280,height=820,menubar=no,toolbar=no');
+    if (!presenterWin) { alert('请允许弹出窗口以使用演讲者视图（S）'); return; }
+    presenterWin.document.open();
+    presenterWin.document.write(html);
+    presenterWin.document.close();
+  }
+
+  function buildPresenterHTML(deckUrl, slideMeta, total, startIdx, channelName) {
+    var metaJSON = JSON.stringify(slideMeta);
+    var deckUrlJSON = JSON.stringify(deckUrl);
+    var channelJSON = JSON.stringify(channelName);
+    var storageKey = 'html-ppt-presenter:' + location.pathname;
+
+    return '<!DOCTYPE html>\n' +
+'<html lang="zh-CN">\n<head>\n<meta charset="utf-8">\n<title>演讲者视图 · Presenter</title>\n<style>\n' +
+'  * { margin: 0; padding: 0; box-sizing: border-box; }\n' +
+'  html, body { width: 100%; height: 100%; overflow: hidden; background: #1a1d24; color: #e6edf3;\n' +
+'    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif; }\n' +
+'  #stage { position: absolute; inset: 0; overflow: hidden; }\n' +
+'  .pcard { position: absolute; background: #0d1117; border: 1px solid rgba(255,255,255,.1); border-radius: 12px;\n' +
+'    box-shadow: 0 8px 32px rgba(0,0,0,.45); display: flex; flex-direction: column; overflow: hidden;\n' +
+'    min-width: 180px; min-height: 100px; transition: box-shadow .2s, border-color .2s; }\n' +
+'  .pcard:hover { border-color: rgba(88,166,255,.3); }\n' +
+'  .pcard.dragging { box-shadow: 0 16px 48px rgba(0,0,0,.6), 0 0 0 2px rgba(88,166,255,.5); border-color: #58a6ff; z-index: 9999; }\n' +
+'  .pcard.resizing { box-shadow: 0 16px 48px rgba(0,0,0,.6), 0 0 0 2px rgba(63,185,80,.5); border-color: #3fb950; z-index: 9999; }\n' +
+'  .pcard-head { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: rgba(255,255,255,.04);\n' +
+'    border-bottom: 1px solid rgba(255,255,255,.06); cursor: move; user-select: none; flex-shrink: 0; }\n' +
+'  .pcard-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--dot-color, #58a6ff); flex-shrink: 0; }\n' +
+'  .pcard-title { font-size: 11px; letter-spacing: .15em; text-transform: uppercase; font-weight: 700; color: #8b949e; flex: 1; }\n' +
+'  .pcard-meta { font-size: 11px; color: #6e7681; }\n' +
+'  .pcard-body { flex: 1; position: relative; overflow: hidden; min-height: 0; }\n' +
+'  .pcard-preview .pcard-body { background: #000; }\n' +
+'  .pcard-preview iframe { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px; border: none;\n' +
+'    transform-origin: top left; pointer-events: none; background: transparent; }\n' +
+'  .pcard-preview .preview-end { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;\n' +
+'    color: #484f58; font-size: 14px; letter-spacing: .12em; }\n' +
+'  .pcard-notes .pcard-body { padding: 14px 18px; overflow-y: auto; font-size: 18px; line-height: 1.8; color: #d0d7de; }\n' +
+'  .pcard-notes .pcard-body p { margin: 0 0 .7em 0; }\n' +
+'  .pcard-notes .pcard-body strong { color: #f0883e; font-weight: 700; }\n' +
+'  .pcard-notes .pcard-body em { color: #58a6ff; font-style: normal; }\n' +
+'  .pcard-notes .empty { color: #484f58; font-style: italic; }\n' +
+'  .pcard-timer .pcard-body { display: flex; flex-direction: column; gap: 14px; padding: 18px 20px; justify-content: center; }\n' +
+'  .timer-display { font-family: "SF Mono", Menlo, monospace; font-size: 42px; font-weight: 700; color: #3fb950; letter-spacing: .04em; line-height: 1; }\n' +
+'  .timer-row { display: flex; align-items: center; gap: 12px; font-size: 14px; color: #8b949e; }\n' +
+'  .timer-row .label { font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: #6e7681; }\n' +
+'  .timer-row .val { color: #e6edf3; font-weight: 600; font-family: "SF Mono", monospace; }\n' +
+'  .timer-controls { display: flex; gap: 8px; flex-wrap: wrap; }\n' +
+'  .timer-btn { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); color: #e6edf3;\n' +
+'    padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; font-family: inherit; }\n' +
+'  .timer-btn:hover { background: rgba(88,166,255,.15); border-color: #58a6ff; }\n' +
+'  .pcard-resize { position: absolute; right: 0; bottom: 0; width: 18px; height: 18px; cursor: nwse-resize; z-index: 5;\n' +
+'    background: linear-gradient(135deg, transparent 50%, rgba(255,255,255,.25) 50%, rgba(255,255,255,.25) 60%, transparent 60%, transparent 70%, rgba(255,255,255,.25) 70%, rgba(255,255,255,.25) 80%, transparent 80%); }\n' +
+'  .hint-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,.6); backdrop-filter: blur(10px);\n' +
+'    border-top: 1px solid rgba(255,255,255,.08); padding: 6px 16px; font-size: 11px; color: #8b949e;\n' +
+'    display: flex; gap: 18px; align-items: center; z-index: 1000; }\n' +
+'  .hint-bar kbd { background: rgba(255,255,255,.08); padding: 1px 6px; border-radius: 3px; font-family: "SF Mono", monospace;\n' +
+'    font-size: 10px; border: 1px solid rgba(255,255,255,.1); color: #e6edf3; }\n' +
+'  .hint-bar .reset-layout { margin-left: auto; background: transparent; border: 1px solid rgba(255,255,255,.15);\n' +
+'    color: #8b949e; padding: 3px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; font-family: inherit; }\n' +
+'  .hint-bar .reset-layout:hover { background: rgba(248,81,73,.15); border-color: #f85149; color: #f85149; }\n' +
+'  body.is-dragging-card * { user-select: none !important; }\n' +
+'  body.is-dragging-card iframe { pointer-events: none !important; }\n' +
+'</style>\n</head>\n<body>\n\n' +
+'<div id="stage">\n' +
+'  <div class="pcard pcard-preview" id="card-cur" style="--dot-color:#58a6ff">\n' +
+'    <div class="pcard-head" data-drag><span class="pcard-dot"></span><span class="pcard-title">CURRENT</span><span class="pcard-meta" id="cur-meta">—</span></div>\n' +
+'    <div class="pcard-body"><iframe id="iframe-cur"></iframe></div>\n' +
+'    <div class="pcard-resize" data-resize></div>\n' +
+'  </div>\n' +
+'  <div class="pcard pcard-preview" id="card-nxt" style="--dot-color:#bc8cff">\n' +
+'    <div class="pcard-head" data-drag><span class="pcard-dot"></span><span class="pcard-title">NEXT</span><span class="pcard-meta" id="nxt-meta">—</span></div>\n' +
+'    <div class="pcard-body"><iframe id="iframe-nxt"></iframe></div>\n' +
+'    <div class="pcard-resize" data-resize></div>\n' +
+'  </div>\n' +
+'  <div class="pcard pcard-notes" id="card-notes" style="--dot-color:#f0883e">\n' +
+'    <div class="pcard-head" data-drag><span class="pcard-dot"></span><span class="pcard-title">SPEAKER SCRIPT · 逐字稿</span></div>\n' +
+'    <div class="pcard-body" id="notes-body"></div>\n' +
+'    <div class="pcard-resize" data-resize></div>\n' +
+'  </div>\n' +
+'  <div class="pcard pcard-timer" id="card-timer" style="--dot-color:#3fb950">\n' +
+'    <div class="pcard-head" data-drag><span class="pcard-dot"></span><span class="pcard-title">TIMER</span></div>\n' +
+'    <div class="pcard-body">\n' +
+'      <div class="timer-display" id="timer-display">00:00</div>\n' +
+'      <div class="timer-row"><span class="label">Slide</span><span class="val" id="timer-count">1 / ' + total + '</span></div>\n' +
+'      <div class="timer-controls">\n' +
+'        <button class="timer-btn" id="btn-prev">← Prev</button>\n' +
+'        <button class="timer-btn" id="btn-next">Next →</button>\n' +
+'        <button class="timer-btn" id="btn-reset">⏱ Reset</button>\n' +
+'      </div>\n' +
+'    </div>\n' +
+'    <div class="pcard-resize" data-resize></div>\n' +
+'  </div>\n' +
+'</div>\n\n' +
+'<div class="hint-bar">\n' +
+'  <span><kbd>← →</kbd> 翻页</span>\n' +
+'  <span><kbd>R</kbd> 重置计时</span>\n' +
+'  <span><kbd>Esc</kbd> 关闭</span>\n' +
+'  <span style="color:#6e7681">拖动卡片头部移动 · 拖动右下角调整大小</span>\n' +
+'  <button class="reset-layout" id="reset-layout">重置布局</button>\n' +
+'</div>\n\n' +
+'<script>\n' +
+'(function(){\n' +
+'  var slideMeta = ' + metaJSON + ';\n' +
+'  var total = ' + total + ';\n' +
+'  var idx = ' + startIdx + ';\n' +
+'  var deckUrl = ' + deckUrlJSON + ';\n' +
+'  var STORAGE_KEY = ' + JSON.stringify(storageKey) + ';\n' +
+'  var bc;\n' +
+'  try { bc = new BroadcastChannel(' + channelJSON + '); } catch(e) {}\n' +
+'  var iframeCur = document.getElementById("iframe-cur");\n' +
+'  var iframeNxt = document.getElementById("iframe-nxt");\n' +
+'  var notesBody = document.getElementById("notes-body");\n' +
+'  var curMeta = document.getElementById("cur-meta");\n' +
+'  var nxtMeta = document.getElementById("nxt-meta");\n' +
+'  var timerDisplay = document.getElementById("timer-display");\n' +
+'  var timerCount = document.getElementById("timer-count");\n' +
+'  function defaultLayout() {\n' +
+'    var w = window.innerWidth, h = window.innerHeight - 36;\n' +
+'    return {\n' +
+'      "card-cur":   { x: 16, y: 16, w: Math.round(w*0.55) - 24, h: Math.round(h*0.62) - 16 },\n' +
+'      "card-nxt":   { x: Math.round(w*0.55) + 8, y: 16, w: w - Math.round(w*0.55) - 24, h: Math.round(h*0.42) - 16 },\n' +
+'      "card-notes": { x: Math.round(w*0.55) + 8, y: Math.round(h*0.42) + 8, w: w - Math.round(w*0.55) - 24, h: h - Math.round(h*0.42) - 16 },\n' +
+'      "card-timer": { x: 16, y: Math.round(h*0.62) + 8, w: Math.round(w*0.55) - 24, h: h - Math.round(h*0.62) - 16 }\n' +
+'    };\n' +
+'  }\n' +
+'  function applyLayout(layout) {\n' +
+'    Object.keys(layout).forEach(function(id){ var el = document.getElementById(id), l = layout[id];\n' +
+'      if (el && l) { el.style.left = l.x + "px"; el.style.top = l.y + "px"; el.style.width = l.w + "px"; el.style.height = l.h + "px"; } });\n' +
+'    rescaleAll();\n' +
+'  }\n' +
+'  function readLayout() { try { var s = localStorage.getItem(STORAGE_KEY); if (s) return JSON.parse(s); } catch(e){} return defaultLayout(); }\n' +
+'  function saveLayout() {\n' +
+'    var layout = {};\n' +
+'    ["card-cur","card-nxt","card-notes","card-timer"].forEach(function(id){ var el = document.getElementById(id);\n' +
+'      if (el) layout[id] = { x: parseInt(el.style.left,10)||0, y: parseInt(el.style.top,10)||0,\n' +
+'        w: parseInt(el.style.width,10)||300, h: parseInt(el.style.height,10)||200 }; });\n' +
+'    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(layout)); } catch(e){}\n' +
+'  }\n' +
+'  function rescaleIframe(iframe) {\n' +
+'    if (!iframe || iframe.style.display === "none") return;\n' +
+'    var body = iframe.parentElement, cw = body.clientWidth, ch = body.clientHeight;\n' +
+'    if (!cw || !ch) return;\n' +
+'    var s = Math.min(cw / 1920, ch / 1080);\n' +
+'    iframe.style.transform = "scale(" + s + ")";\n' +
+'    var sw = 1920 * s, sh = 1080 * s;\n' +
+'    iframe.style.left = Math.max(0, (cw - sw) / 2) + "px";\n' +
+'    iframe.style.top = Math.max(0, (ch - sh) / 2) + "px";\n' +
+'  }\n' +
+'  function rescaleAll() { rescaleIframe(iframeCur); rescaleIframe(iframeNxt); }\n' +
+'  window.addEventListener("resize", rescaleAll);\n' +
+'  document.querySelectorAll("[data-drag]").forEach(function(handle){\n' +
+'    handle.addEventListener("mousedown", function(e){\n' +
+'      if (e.button !== 0) return;\n' +
+'      var card = handle.closest(".pcard"); if (!card) return;\n' +
+'      e.preventDefault(); card.classList.add("dragging"); document.body.classList.add("is-dragging-card");\n' +
+'      var startX = e.clientX, startY = e.clientY;\n' +
+'      var startL = parseInt(card.style.left,10)||0, startT = parseInt(card.style.top,10)||0;\n' +
+'      function onMove(ev){ card.style.left = Math.max(0, Math.min(window.innerWidth-100, startL + ev.clientX - startX)) + "px";\n' +
+'        card.style.top = Math.max(0, Math.min(window.innerHeight-50, startT + ev.clientY - startY)) + "px"; }\n' +
+'      function onUp(){ card.classList.remove("dragging"); document.body.classList.remove("is-dragging-card");\n' +
+'        document.removeEventListener("mousemove", onMove); document.removeEventListener("mouseup", onUp); saveLayout(); }\n' +
+'      document.addEventListener("mousemove", onMove); document.addEventListener("mouseup", onUp);\n' +
+'    });\n' +
+'  });\n' +
+'  document.querySelectorAll("[data-resize]").forEach(function(handle){\n' +
+'    handle.addEventListener("mousedown", function(e){\n' +
+'      if (e.button !== 0) return;\n' +
+'      var card = handle.closest(".pcard"); if (!card) return;\n' +
+'      e.preventDefault(); e.stopPropagation(); card.classList.add("resizing"); document.body.classList.add("is-dragging-card");\n' +
+'      var startX = e.clientX, startY = e.clientY;\n' +
+'      var startW = parseInt(card.style.width,10)||card.offsetWidth, startH = parseInt(card.style.height,10)||card.offsetHeight;\n' +
+'      function onMove(ev){ var nw = Math.max(180, startW + ev.clientX - startX), nh = Math.max(100, startH + ev.clientY - startY);\n' +
+'        card.style.width = nw + "px"; card.style.height = nh + "px";\n' +
+'        if (card.querySelector("iframe")) rescaleIframe(card.querySelector("iframe")); }\n' +
+'      function onUp(){ card.classList.remove("resizing"); document.body.classList.remove("is-dragging-card");\n' +
+'        document.removeEventListener("mousemove", onMove); document.removeEventListener("mouseup", onUp); rescaleAll(); saveLayout(); }\n' +
+'      document.addEventListener("mousemove", onMove); document.addEventListener("mouseup", onUp);\n' +
+'    });\n' +
+'  });\n' +
+'  var iframeReady = { cur: false, nxt: false };\n' +
+'  window.addEventListener("message", function(e){\n' +
+'    if (!e.data || e.data.type !== "preview-ready") return;\n' +
+'    if (e.source === iframeCur.contentWindow) { iframeReady.cur = true; postPreviewGoto(iframeCur, idx); }\n' +
+'    else if (e.source === iframeNxt.contentWindow) { iframeReady.nxt = true; postPreviewGoto(iframeNxt, idx + 1 < total ? idx + 1 : idx); }\n' +
+'  });\n' +
+'  function postPreviewGoto(iframe, n) { try { iframe.contentWindow.postMessage({ type: "preview-goto", idx: n }, "*"); } catch(e){} }\n' +
+'  function update(n) {\n' +
+'    n = Math.max(0, Math.min(total - 1, n)); idx = n;\n' +
+'    if (iframeReady.cur) postPreviewGoto(iframeCur, n);\n' +
+'    curMeta.textContent = (n + 1) + "/" + total;\n' +
+'    if (n + 1 < total) {\n' +
+'      iframeNxt.style.display = "";\n' +
+'      if (iframeReady.nxt) postPreviewGoto(iframeNxt, n + 1);\n' +
+'      nxtMeta.textContent = (n + 2) + "/" + total;\n' +
+'    } else {\n' +
+'      iframeNxt.style.display = "none";\n' +
+'      var body = document.querySelector("#card-nxt .pcard-body");\n' +
+'      if (body && !body.querySelector(".preview-end")) { var end = document.createElement("div"); end.className = "preview-end"; end.textContent = "— END OF DECK —"; body.appendChild(end); }\n' +
+'      nxtMeta.textContent = "END";\n' +
+'    }\n' +
+'    var note = slideMeta[n].notes;\n' +
+'    notesBody.innerHTML = note || "<span class=empty>（这一页还没有逐字稿）</span>";\n' +
+'    timerCount.textContent = (n + 1) + " / " + total;\n' +
+'  }\n' +
+'  var tStart = Date.now();\n' +
+'  setInterval(function(){ var s = Math.floor((Date.now() - tStart)/1000);\n' +
+'    timerDisplay.textContent = String(Math.floor(s/60)).padStart(2,"0") + ":" + String(s%60).padStart(2,"0"); }, 1000);\n' +
+'  function resetTimer(){ tStart = Date.now(); timerDisplay.textContent = "00:00"; }\n' +
+'  if (bc) { bc.onmessage = function(e){ if (e.data && e.data.type === "go") update(e.data.idx); }; }\n' +
+'  function go(n) { update(n); if (bc) bc.postMessage({ type: "go", idx: idx }); }\n' +
+'  document.getElementById("btn-prev").addEventListener("click", function(){ go(idx - 1); });\n' +
+'  document.getElementById("btn-next").addEventListener("click", function(){ go(idx + 1); });\n' +
+'  document.getElementById("btn-reset").addEventListener("click", resetTimer);\n' +
+'  document.getElementById("reset-layout").addEventListener("click", function(){\n' +
+'    if (confirm("恢复默认卡片布局？")) { try { localStorage.removeItem(STORAGE_KEY); } catch(e){} applyLayout(defaultLayout()); } });\n' +
+'  document.addEventListener("keydown", function(e){\n' +
+'    if (e.metaKey || e.ctrlKey || e.altKey) return;\n' +
+'    switch(e.key) {\n' +
+'      case "ArrowRight": case " ": case "PageDown": go(idx + 1); e.preventDefault(); break;\n' +
+'      case "ArrowLeft": case "PageUp": go(idx - 1); e.preventDefault(); break;\n' +
+'      case "Home": go(0); break;\n' +
+'      case "End": go(total - 1); break;\n' +
+'      case "r": case "R": resetTimer(); break;\n' +
+'      case "Escape": window.close(); break;\n' +
+'    }\n' +
+'  });\n' +
+'  iframeCur.addEventListener("load", function(){ rescaleIframe(iframeCur); });\n' +
+'  iframeNxt.addEventListener("load", function(){ rescaleIframe(iframeNxt); });\n' +
+'  applyLayout(readLayout());\n' +
+'  iframeCur.src = deckUrl + "?preview=" + (idx + 1);\n' +
+'  if (idx + 1 < total) iframeNxt.src = deckUrl + "?preview=" + (idx + 2);\n' +
+'  notesBody.innerHTML = slideMeta[idx].notes || "<span class=empty>（这一页还没有逐字稿）</span>";\n' +
+'  curMeta.textContent = (idx + 1) + "/" + total;\n' +
+'  nxtMeta.textContent = (idx + 2) + "/" + total;\n' +
+'  timerCount.textContent = (idx + 1) + " / " + total;\n' +
+'})();\n' +
+'<\/script>\n</body>\n</html>';
+  }
+
+  /* ===== keyboard (audience window) ===== */
+  document.addEventListener('keydown', function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    switch (e.key) {
+      case 'ArrowRight': case ' ': case 'PageDown': case 'Enter': next(); e.preventDefault(); break;
+      case 'ArrowLeft': case 'PageUp': case 'Backspace': prev(); e.preventDefault(); break;
+      case 'Home': go(0); break;
+      case 'End': go(total - 1); break;
+      case 'f': case 'F': fullscreen(); break;
+      case 's': case 'S': openPresenterWindow(); break;
+      case 'o': case 'O': toggleOverview(); break;
+      case 'Escape': toggleOverview(false); break;
+    }
+  });
+
+  /* ===== click zones ===== */
+  document.getElementById('zone-prev').addEventListener('click', prev);
+  document.getElementById('zone-next').addEventListener('click', next);
+
+  /* ===== touch swipe ===== */
+  var touchX = 0, touchY = 0;
+  document.addEventListener('touchstart', function (e) {
+    touchX = e.touches[0].clientX;
+    touchY = e.touches[0].clientY;
+  }, { passive: true });
+  document.addEventListener('touchend', function (e) {
+    var dx = e.changedTouches[0].clientX - touchX;
+    var dy = e.changedTouches[0].clientY - touchY;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+      if (dx < 0) next(); else prev();
+    }
+  }, { passive: true });
+
+  /* ===== hide hint after first interaction ===== */
+  var hintTimer = setTimeout(function () { hintBar.classList.add('hidden'); }, 5000);
+  function hideHint() { hintBar.classList.add('hidden'); clearTimeout(hintTimer); }
+  document.addEventListener('keydown', hideHint);
+  document.addEventListener('click', hideHint);
+
+  /* ===== hash deep-link ===== */
+  function fromHash() {
+    var hm = /^#\/(\d+)/.exec(location.hash || '');
+    if (hm) go(Math.max(0, parseInt(hm[1], 10) - 1));
+  }
+  window.addEventListener('hashchange', fromHash);
+  fromHash();
+  go(idx);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,856 @@
+openapi: 3.1.0
+info:
+  title: 风险监管本地 API
+  description: 用于 1:1 风险监管克隆项目的兼容旧版 REST API。
+  version: 1.0.0
+  contact:
+    name: 项目克隆团队
+servers:
+  - url: http://localhost:8101
+    description: 默认本地后端
+paths:
+  /api/login:
+    post:
+      summary: 本地管理员登录
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uuid: { type: string }
+                username: { type: string, example: admin }
+                password: { type: string, example: admin }
+      responses:
+        '200':
+          description: 登录成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+              example:
+                code: 0
+                msg: success
+                data:
+                  token: local-risk-api-token
+                  expire: 43200
+
+  /api/sys/dept/list:
+    get:
+      summary: 部门字典
+      operationId: departmentList
+      responses:
+        '200':
+          description: 部门列表
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+
+  /api/enterprise/alls:
+    get:
+      summary: 股权企业树
+      operationId: equityEnterprises
+      parameters:
+        - name: parentCreditCode
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: 企业树
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+
+  /api/supervise/risk/page:
+    get:
+      summary: 带筛选的风险列表
+      operationId: riskPage
+      parameters:
+        - name: pageNum
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: pageSize
+          in: query
+          schema: { type: integer, default: 10, maximum: 100 }
+        - name: enterpriseName
+          in: query
+          schema: { type: string }
+        - name: riskLevel
+          in: query
+          schema: { type: string }
+        - name: enterpriseGroup
+          in: query
+          schema: { type: string }
+        - name: riskType
+          in: query
+          schema: { type: string }
+        - name: operationStatus
+          in: query
+          schema: { type: string }
+        - name: manageDeptId
+          in: query
+          schema: { type: string }
+        - name: belongingPlateId
+          in: query
+          schema: { type: string }
+        - name: indicatorSource
+          in: query
+          schema: { type: string }
+        - name: startDate
+          in: query
+          schema: { type: string, format: date }
+        - name: endDate
+          in: query
+          schema: { type: string, format: date }
+      responses:
+        '200':
+          description: 分页风险列表
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+
+  /api/supervise/risk/export:
+    get:
+      summary: 将风险导出为 CSV
+      operationId: exportRisks
+      responses:
+        '200':
+          description: UTF-8 CSV 文件
+          content:
+            text/csv:
+              schema: { type: string }
+
+  /api/supervise/risk/pending-reviews:
+    get:
+      summary: 待审核队列
+      operationId: pendingReviews
+      responses:
+        '200':
+          description: 待审核列表
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+
+  /api/supervise/risk/reviewed-reviews:
+    get:
+      summary: 已审核队列
+      operationId: reviewedReviews
+      responses:
+        '200':
+          description: 已审核列表
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+
+  /api/supervise/risk/riskHandle:
+    post:
+      summary: 旧版风险处理
+      operationId: riskHandle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                riskId: { type: string }
+                handleType: { type: integer, enum: [0, 1, 2] }
+                handleReason: { type: string }
+      responses:
+        '200':
+          description: 处理结果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+
+  /api/supervise/risk/riskSituation:
+    post:
+      summary: 旧版情况提交
+      operationId: riskSituation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                riskId: { type: string }
+                handleReason: { type: string }
+                policyMaking: { type: string }
+                reportOrNot: { type: integer, enum: [0, 1] }
+                reportContent: { type: string }
+                url: { type: string }
+      responses:
+        '200':
+          description: 情况提交结果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+
+  /api/supervise/risk/superviseRiskOperationLog/getLogByRiskId:
+    get:
+      summary: 风险操作日志
+      operationId: riskOperationLogs
+      parameters:
+        - name: riskId
+          in: query
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: 操作日志
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+
+  /api/supervise/risk/manual:
+    post:
+      summary: 创建手工映射风险
+      operationId: manualRisk
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                enterpriseName: { type: string }
+                enterpriseGroup: { type: string }
+                belongingPlateId: { type: string }
+                manageDeptId: { type: string }
+                riskIndicator: { type: string }
+                riskContent: { type: string }
+                riskLevel: { type: string }
+                riskMainType: { type: string }
+                riskType: { type: string }
+                indicatorSource: { type: integer }
+                occurTime: { type: string }
+                shareholdingRatio: { type: string }
+                investmentAmount: { type: string }
+                metricsAliasCode: { type: string }
+                creditCode: { type: string }
+                qccId: { type: string }
+                image: { type: string }
+                metricsName: { type: string }
+                operator: { type: string }
+      responses:
+        '200':
+          description: 已创建风险
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+
+  /api/supervise/risk/{id}/description:
+    post:
+      summary: 提交情况描述
+      operationId: description
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                occurrenceReason: { type: string }
+                decisionBody: { type: string }
+                reportedToGroup: { type: integer, enum: [0, 1] }
+                reportContent: { type: string }
+                attachments: { type: string }
+                submitter: { type: string }
+      responses:
+        '200':
+          description: 情况描述已提交
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+
+  /api/supervise/risk/{id}/confirm:
+    post:
+      summary: 提交风险确认
+      operationId: confirmation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                isRisk: { type: boolean }
+                remark: { type: string }
+                operator: { type: string }
+      responses:
+        '200':
+          description: 确认已提交
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+
+  /api/supervise/risk/{id}/confirmation-audit:
+    post:
+      summary: 审核风险确认
+      operationId: confirmationAudit
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                auditStatus: { type: integer, enum: [0, 1] }
+                handleReason: { type: string }
+                operator: { type: string }
+      responses:
+        '200':
+          description: 审核结果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+
+  /api/supervise/risk/{id}/disposal-plans:
+    post:
+      summary: 创建或变更处置计划
+      operationId: disposalPlan
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                target: { type: string }
+                deadline: { type: string, format: date }
+                operator: { type: string }
+                steps:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      content: { type: string }
+                      responsibleDepartment: { type: string }
+                      responsiblePerson: { type: string }
+                      plannedAt: { type: string, format: date }
+                      attachments: { type: string }
+                      attachmentName: { type: string }
+      responses:
+        '200':
+          description: 计划已创建
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+
+  /api/supervise/disposal-steps/{id}/progress:
+    get:
+      summary: 列出某步骤的进度
+      operationId: disposalProgressPage
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: 进度列表
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+    post:
+      summary: 提交处置进度
+      operationId: disposalProgress
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content: { type: string }
+                completed: { type: boolean }
+                operator: { type: string }
+      responses:
+        '200':
+          description: 进度已提交
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+
+  /api/supervise/risk/{id}/disposal-complete:
+    post:
+      summary: 提交处置计划完成
+      operationId: disposalComplete
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                operator: { type: string }
+      responses:
+        '200':
+          description: 完成已提交
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+
+  /api/supervise/risk/{id}/disposal-audit:
+    post:
+      summary: 审核处置完成
+      operationId: disposalAudit
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                approved: { type: boolean }
+                opinion: { type: string }
+                operator: { type: string }
+      responses:
+        '200':
+          description: 审核结果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+
+  /api/supervise/risk/{id}/elimination:
+    post:
+      summary: 申请风险消除
+      operationId: elimination
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                operator: { type: string }
+                reason: { type: string }
+      responses:
+        '200':
+          description: 消除已申请
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+
+  /api/supervise/risk/{id}/elimination-audit:
+    post:
+      summary: 审核风险消除
+      operationId: eliminationAudit
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                approved: { type: boolean }
+                opinion: { type: string }
+                operator: { type: string }
+      responses:
+        '200':
+          description: 消除审核结果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+
+  /api/supervise/risk/{id}/level-changes:
+    post:
+      summary: 申请风险等级变更
+      operationId: levelChange
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                requestedLevel: { type: string }
+                reason: { type: string }
+                operator: { type: string }
+      responses:
+        '200':
+          description: 等级变更已申请
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+
+  /api/supervise/risk/{id}/level-change-audit:
+    post:
+      summary: 审核风险等级变更
+      operationId: levelChangeAudit
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                approved: { type: boolean }
+                opinion: { type: string }
+                operator: { type: string }
+      responses:
+        '200':
+          description: 等级变更审核结果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+
+  /api/supervise/risk/dynamics/process:
+    post:
+      summary: 处理持久化的外部动态
+      operationId: processPersistedDynamics
+      responses:
+        '200':
+          description: 占位响应
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+
+  /api/supervise/risk/jobs/description-timeout:
+    post:
+      summary: 描述超时任务
+      operationId: timeoutDescriptions
+      responses:
+        '200':
+          description: 已处理到期描述
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+
+  /api/supervise/risk/jobs/disposal-overdue:
+    post:
+      summary: 逾期计划刷新任务
+      operationId: refreshOverduePlans
+      responses:
+        '200':
+          description: 已处理逾期计划
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+
+  /api/supervise/risk/riskReview:
+    post:
+      summary: 旧版风险审核别名
+      operationId: riskReview
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                riskId: { type: string }
+                auditStatus: { type: integer, enum: [0, 1] }
+                handleReason: { type: string }
+      responses:
+        '200':
+          description: 审核结果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+
+  /api/supervise/enterprise:
+    post:
+      summary: 创建企业
+      operationId: createEnterprise
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnterpriseCommand'
+      responses:
+        '200':
+          description: 企业已创建
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+    put:
+      summary: 更新企业
+      operationId: updateEnterprise
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnterpriseCommand'
+      responses:
+        '200':
+          description: 企业已更新
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+
+  /api/supervise/enterprise/{id}:
+    get:
+      summary: 获取企业分页/树或详情
+      operationId: enterpriseGet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: 企业数据
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+    post:
+      summary: 企业选项别名
+      operationId: enterprisePost
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: 企业选项
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+    delete:
+      summary: 软删除企业
+      operationId: deleteEnterprise
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: 已删除
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+
+  /api/supervise/index:
+    post:
+      summary: 创建指标
+      operationId: createIndicator
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IndicatorCommand'
+      responses:
+        '200':
+          description: 指标已创建
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+    put:
+      summary: 更新指标
+      operationId: updateIndicator
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IndicatorCommand'
+      responses:
+        '200':
+          description: 指标已更新
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+
+  /api/supervise/index/{id}:
+    get:
+      summary: 获取指标分页/风险设置
+      operationId: indexGet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: 指标数据
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+    post:
+      summary: 保存指标风险设置
+      operationId: indexPost
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                riskLevelList: { type: array }
+                importantMatterList: { type: array }
+                riskLevel: { type: string }
+                enterpriseType: { type: string }
+                importantMatter: { type: integer }
+      responses:
+        '200':
+          description: 设置已保存
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+    delete:
+      summary: 删除指标
+      operationId: deleteIndicator
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: 已删除
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+
+components:
+  schemas:
+    Envelope:
+      type: object
+      required: [code, msg]
+      properties:
+        code:
+          type: integer
+          description: '0 表示成功，否则为错误码'
+        msg:
+          type: string
+          description: 响应消息
+        data:
+          type: object
+          description: 响应数据
+
+    EnterpriseCommand:
+      type: object
+      properties:
+        id: { type: string }
+        enterpriseName: { type: string }
+        parentEnterprise: { type: string }
+        creditCode: { type: string }
+        enterpriseGroup: { type: string }
+        belongingPlateId: { type: string }
+        shareholdingRatio: { type: string }
+        investmentAmount: { type: string }
+        image: { type: string }
+        remark: { type: string }
+
+    IndicatorCommand:
+      type: object
+      properties:
+        id: { type: string }
+        indicatorName: { type: string }
+        indicatorSource: { type: integer }
+        riskLevel: { type: string }
+        indicatorCategory1: { type: string }
+        indicatorCategory2: { type: string }
+        indicatorStatus: { type: integer }
+        associatedDepartment: { type: string }
+        score: { type: integer }
+        qccCode: { type: string }
+        qccName: { type: string }
+        remark: { type: string }
+        confirmByClient: { type: integer }
+        importantMatter: { type: integer }
+        manageDeptId: { type: string }

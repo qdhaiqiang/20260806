@@ -111,6 +111,16 @@ test('新增风险：企业名称支持中文输入法最终值', async ({ page 
   await expect(enterpriseInput).toHaveValue('青岛华通测试企业有限公司')
 })
 
+test('新增风险：必填项缺失时阻止保存并提示', async ({ page }) => {
+  await page.getByRole('button', { name: '＋ 新增' }).click()
+  const dialog = page.getByRole('dialog', { name: '新增风险信息' })
+  let alertMessage = ''
+  page.once('dialog', async alert => { alertMessage = alert.message(); await alert.accept() })
+  await dialog.getByRole('button', { name: '保存' }).click()
+  expect(alertMessage).toBe('请完整填写必填项')
+  await expect(dialog).toBeVisible()
+})
+
 test('风险信息检索：企业名称支持逐字中文输入并传给查询接口', async ({ page }) => {
   const input = page.getByPlaceholder('请输入企业名称').last()
   await input.click()
@@ -132,4 +142,13 @@ test('处置计划：保存时调用计划创建接口', async ({ page }) => {
   const request = page.waitForRequest('**/api/supervise/risk/risk-elimination/disposal-plans')
   await dialog.getByRole('button', { name: '保存' }).click()
   await expect(JSON.parse((await request).postData() || '{}')).toMatchObject({ target: '完成测试处置', deadline: '2026-08-31', steps: [{ content: '完成第一步', plannedAt: '2026-08-24' }] })
+})
+
+test('处置计划：缺少目标、截止日或完整步骤时阻止保存', async ({ page }) => {
+  const row = page.locator('tr', { hasText: '页面测试-风险消除' })
+  await row.locator('a', { hasText: '处置计划' }).click()
+  const dialog = page.getByRole('dialog', { name: '制定处置计划' })
+  await dialog.getByRole('button', { name: '保存' }).click()
+  await expect(dialog.getByText('请填写计划目标、截止日期和至少一个完整步骤')).toBeVisible()
+  await expect(dialog).toBeVisible()
 })

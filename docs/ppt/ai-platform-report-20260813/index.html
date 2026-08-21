@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>青岛红创｜Gastown 多 Agent AI 开发平台实证汇报</title>
+  <link rel="stylesheet" href="assets/fonts.css">
+  <link rel="stylesheet" href="assets/base.css">
+  <link rel="stylesheet" id="theme-link" href="assets/themes/tokyo-night.css">
+  <link rel="stylesheet" href="assets/animations/animations.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="tpl-graphify-dark-graph" data-themes="tokyo-night,nord,catppuccin-mocha" data-theme-base="assets/themes/">
+  <div class="deck">
+    <header class="deck-header"><span>Qingdao Redcreation · Gastown AI Delivery Platform</span><span>Confidential · 2026.08</span></header>
+
+    <section class="slide is-active" data-title="封面">
+      <div class="ambient"><i></i><i></i><i></i></div>
+      <svg class="network" viewBox="0 0 1600 900" aria-hidden="true"><g><path d="M90 600L310 390 520 510 720 240 955 420 1240 260 1500 440M310 390L410 160M520 510L665 700 955 420M955 420L1120 660 1450 730"/><circle cx="90" cy="600" r="8"/><circle cx="310" cy="390" r="14"/><circle cx="410" cy="160" r="7"/><circle cx="520" cy="510" r="12"/><circle cx="665" cy="700" r="9"/><circle cx="720" cy="240" r="16"/><circle cx="955" cy="420" r="18"/><circle cx="1120" cy="660" r="10"/><circle cx="1240" cy="260" r="12"/><circle cx="1450" cy="730" r="8"/><circle cx="1500" cy="440" r="13"/></g></svg>
+      <div class="cover-content anim-rise-in">
+        <p class="eyebrow">AI 开发平台 · 实证汇报</p>
+        <h1 class="cover-title">华通项目<br><span class="gradient-text">复刻结果汇报</span></h1>
+        <p class="cover-tagline">让组织获得需求自由</p>
+        <div class="cover-outline" aria-label="汇报提纲"><b>汇报提纲</b><div><span><em>01</em>项目实践成果</span><i></i><span><em>02</em>Gastown 多 Agent 协同</span><i></i><span><em>03</em>质量治理与试点价值</span></div></div>
+        <div class="chips"><span>网站 1:1 复刻</span><span>企业后台复刻</span><span>遗留系统接手</span><span>可维护交付</span></div>
+      </div>
+      <div class="deck-footer"><span>青岛红创</span><span class="slide-number" data-current="1" data-total="12"></span></div>
+      <div class="notes">开场只讲结论：平台并非概念演示。接下来先看三个真实项目的递进成果，再解释背后的协同机制。</div>
+    </section>
+
+    <section class="slide" data-title="结论先行">
+      <div class="ambient"><i></i><i></i></div>
+      <p class="eyebrow">01 · Conclusion first</p>
+      <h2 class="gd-h2">三个真实项目，证明平台已具备<br><span class="gradient-text">复刻、接手与治理能力。</span></h2>
+      <div class="ladder anim-stagger-list">
+        <article class="glass"><em>01</em><b>快速复刻</b><h3>机器人公共服务平台</h3><p class="project-context"><span>项目基础</span>仅有页面</p><p>素材本地化 · 多路由 · 核心交互</p></article>
+        <i>→</i>
+        <article class="glass accent"><em>02</em><b>复杂复刻</b><h3>穿透式监管平台</h3><p class="project-context"><span>项目基础</span>前端页面 + MySQL 数据库</p><p>风险流程 · 本地 API · 既有数据保护</p></article>
+        <i>→</i>
+        <article class="glass"><em>03</em><b>安全接手</b><h3>renren-security</h3><p class="project-context"><span>项目基础</span>源代码 + 业务分析文档</p><p>热点取证 · 整改计划 · 知识转移</p></article>
+      </div>
+      <div class="quote">这不是三段孤立佐证，而是一条从“看得见的网页”到“必须维护的旧代码”的能力阶梯。</div>
+      <div class="deck-footer"><span>第二章 · 三组项目实践</span><span class="slide-number" data-current="2" data-total="12"></span></div>
+      <div class="notes">这一页建立总览。先给出三个项目和三类能力，后面逐个给证据，避免在单一项目细节中迷失主线。</div>
+    </section>
+
+    <section class="slide" data-title="网站复刻">
+      <p class="eyebrow">02 · Practice 1 / Fast clone</p>
+      <h2 class="gd-h2">公开网站 1:1 复刻：<span class="gradient-text">先证明能快速把网页变成本地产品。</span></h2>
+      <div class="split">
+        <div class="stack">
+          <p class="lede">青岛市具身智能机器人公共服务平台：从公开站点到本地静态镜像与市场数据适配。</p>
+          <div class="metric-row"><div><strong>29</strong><span>本地静态资产</span></div><div><strong>15</strong><span>发布路由</span></div><div><strong>4</strong><span>模板新建管理页面</span></div></div>
+          <div class="glass slim"><b>交付与投入</b><p>采用公司模板新建 4 个管理页面，将页面数据改造为动态数据；DeepSeek 消耗约 ¥1，完成耗时约 4 小时。首页、菜单、页脚、登录/注册弹窗、数据服务卡片/详情/购买入口可用；路由验证未发现控制台错误。</p></div>
+        </div>
+        <img class="evidence-image" src="../../progress-assets/robot-site-homepage-clone-20260813.jpg" alt="机器人公共服务平台本地复刻首页">
+      </div>
+      <div class="deck-footer"><span>证明能力：网页巡检 → 素材本地化 → 前端镜像 → 路由验证</span><span class="slide-number" data-current="3" data-total="12"></span></div>
+      <div class="notes">第一阶只证明快速复刻能力。它的难点是页面、素材、路由和交互镜像；下一页升级到企业级数据和流程约束。</div>
+    </section>
+
+    <section class="slide" data-title="企业后台复刻">
+      <p class="eyebrow">03 · Practice 2 / Complex clone</p>
+      <h2 class="gd-h2">穿透式监管平台复刻：<span class="gradient-text">不只像，还要尊重数据边界。</span></h2>
+      <div class="constraint-grid anim-stagger-list">
+        <article class="glass"><b>数据边界</b><strong>不改表结构</strong><p>基于既有表适配，不建表、不迁移、不改 schema；原系统仅登录、浏览与界面取证。</p></article>
+        <article class="glass"><b>既有数据库</b><strong>81 表</strong><p>基于 <span class="mono">test1.sqlite</span> 的原表与现有数据适配；不建表、不迁移、不改 schema。</p></article>
+        <article class="glass"><b>本地交付</b><strong>9 页面</strong><p>风险监控、企业/指标管理、待审核、股权结构等本地可运行。</p></article>
+        <article class="glass"><b>接口闭环</b><strong>31 个 API</strong><p>已实现 31 个本地接口 API，用于演示数据与风险流程闭环。</p></article>
+      </div>
+      <div class="quote">定位是“纯前端复刻优先 + 必要的本地兼容 API”，不将其包装为生产后端重建。</div>
+      <div class="deck-footer"><span>第二阶 · 复杂业务 + 既有资产保护</span><span class="slide-number" data-current="4" data-total="12"></span></div>
+      <div class="notes">强调边界与难度。与网站复刻相比，这里增加了只读原系统、81 表既有数据、风险流程和管理后台交互的约束。</div>
+    </section>
+
+    <section class="slide" data-title="管理后台证据">
+      <p class="eyebrow">04 · Practice 2 / Running evidence</p>
+      <h2 class="gd-h2">本地演示证明：<span class="gradient-text">它不是一张设计稿。</span></h2>
+      <div class="split evidence-split">
+        <img class="evidence-image" src="../../progress-assets/risk-monitor-current-20260813.jpg" alt="风险监控工作台">
+        <div class="evidence-stats">
+          <div class="glass"><b>既有风险记录</b><strong>757 条</strong><p>组合筛选、分页、导出、新增、详情和状态动作。</p></div>
+          <div class="glass"><b>实现资产</b><strong>5,270 行</strong><p>前端、后端与 SQL 合计。</p></div>
+          <div class="glass good"><b>前端构建</b><strong>PASS</strong><p>TypeScript + Vite 构建通过。</p></div>
+          <div class="glass good"><b>前端 E2E</b><strong>19 / 19</strong><p>关键页面与流程测试通过。</p></div>
+          <div class="glass good"><b>核心业务测试</b><strong>12 个 Test Case</strong><p>覆盖风险确认、审核与处置计划等核心规则。</p></div>
+          <div class="glass accent"><b>工程沉淀</b><strong>9 + 29</strong><p>研究规格文档 + 本地 PNG/SVG 素材。</p></div>
+        </div>
+      </div>
+      <div class="metric-row three time-metrics"><div><strong>2 天</strong><span>自然日跨度</span></div><div><strong>11 h</strong><span>有效时段记录</span></div><div><strong>2–3 h</strong><span>人工决策 / 复核估算</span></div></div>
+      <div class="deck-footer"><span>证明能力：规格取证 → 数据适配 → 复杂表单与流程实现</span><span class="slide-number" data-current="5" data-total="12"></span></div>
+      <div class="notes">这一页放运行证据。强调数据、交互和流程都在本地跑通；严格避免声称“所有页面已像素级验收”。</div>
+    </section>
+
+    <section class="slide" data-title="工程质量证据">
+      <p class="eyebrow">05 · Practice 3 / Legacy takeover</p>
+      <h2 class="gd-h2">renren-security 接手：<span class="gradient-text">先看懂，再安全地改。</span></h2>
+      <div class="evidence-grid evidence-grid-full">
+        <figure><img src="assets/evidence/c4-documents.png" alt="C4 文档目录截图"><figcaption><b>C4 架构文档</b><span>模块、容器、组件与依赖关系可追溯。</span></figcaption></figure>
+        <figure><img src="assets/evidence/xray-report.png" alt="XRay 报告截图"><figcaption><b>XRay 代码演化报告</b><span>3 次提交、78,117 churn、677 个热点/风险文件。</span></figcaption></figure>
+        <figure><img src="assets/evidence/code-comments.png" alt="风险工作流代码注释截图"><figcaption><b>代码注释与业务规则</b><span>风险确认、审核、处置计划等规则直接沉淀在实现中。</span></figcaption></figure>
+        <figure><img src="assets/evidence/test-report.png" alt="风险管理页面测试报告"><figcaption><b>测试报告</b><span>Playwright / Chromium：19 / 19 页面用例通过，构建通过。</span></figcaption></figure>
+      </div>
+      <div class="deck-footer"><span>第三阶 · 架构理解 + 代码监管 + 知识转移</span><span class="slide-number" data-current="6" data-total="12"></span></div>
+      <div class="notes">四类工程证据放在遗留系统接手页：架构可追溯、演化可量化、代码可审查、交付可验证。</div>
+    </section>
+
+    <section class="slide" data-title="递进比较">
+      <p class="eyebrow">06 · Evidence matrix</p>
+      <h2 class="gd-h2">从易到难，三个项目共同证明什么？</h2>
+      <div class="matrix">
+        <div class="m-head"></div><div class="m-head">机器人网站</div><div class="m-head">监管平台</div><div class="m-head">renren-security</div>
+        <b>起点</b><p>仅有页面与静态资源</p><p>前端页面 + MySQL 数据库</p><p>有源码与业务分析文档</p>
+        <b>关键挑战</b><p>页面、素材、路由、交互</p><p>数据库零侵入、复杂流程</p><p>热点耦合、知识孤岛</p>
+        <b>交付物</b><p>本地站点、资源映射、路由验证</p><p>本地后台、规格、数据适配、测试</p><p>架构地图、风险报告、整改任务</p>
+        <b>证明能力</b><p class="good-text">快速复刻</p><p class="good-text">复杂复刻</p><p class="good-text">安全接手与治理</p>
+      </div>
+      <div class="quote">结论先行：平台已经在不同难度、不同起点的项目上留下可复核的交付物。接下来解释这些结果如何被组织出来。</div>
+      <div class="deck-footer"><span>实践结论 → Gastown 协作机制</span><span class="slide-number" data-current="7" data-total="12"></span></div>
+      <div class="notes">这是第二章的收束页。用同一套维度横向比较，避免项目案例各讲各的。随后进入 Gastown 机制解释。</div>
+    </section>
+
+    <section class="slide" data-title="Gastown 角色">
+      <p class="eyebrow">07 · How it works / Gastown roles</p>
+      <h2 class="gd-h2">Gastown 多 Agent：<span class="gradient-text">把并行开发变成可管理的生产线。</span></h2>
+      <div class="role-grid anim-stagger-list">
+        <article><b>Mayor</b><p>拆任务、建立 Convoy、分派研究/实现/测试任务、汇总结果。</p></article>
+        <article><b>Polecat</b><p>在隔离 Git worktree 中完成边界清晰的工作包。</p></article>
+        <article><b>Witness / Deacon</b><p>项目级与跨项目巡检、恢复、升级，发现卡住任务。</p></article>
+        <article><b>Refinery / Crew</b><p>合并验证门禁；人类保留范围决策、审查与验收。</p></article>
+      </div>
+      <div class="quote">我司平台采用 Gastown 包装版作为协作底座，并叠加复刻规范、质量门禁、项目模板与交接标准。</div>
+      <div class="deck-footer"><span>不是“多开窗口”，而是任务、状态、隔离与门禁的一套机制</span><span class="slide-number" data-current="8" data-total="12"></span></div>
+      <div class="notes">此页说明角色，而非把技术细节讲得过深。核心要点是 Mayor 编排、Polecat 隔离执行、Witness/Deacon 监控、Refinery 验证、Crew 决策。</div>
+    </section>
+
+    <section class="slide" data-title="Gastown 工作流">
+      <p class="eyebrow">08 · How it works / Workflow</p>
+      <h2 class="gd-h2">从需求到可审查变更，<span class="gradient-text">每一步都有归属。</span></h2>
+      <div class="pipeline wide anim-stagger-list">
+        <article><em>01</em><b>客户 / Crew</b><p>目标、范围、数据边界、验收条件。</p></article><i>→</i>
+        <article><em>02</em><b>Mayor</b><p>拆解 Convoy，分派有边界的工作包。</p></article><i>→</i>
+        <article><em>03</em><b>Polecats</b><p>研究、实现、测试在隔离 worktree 并行。</p></article><i>→</i>
+        <article><em>04</em><b>Refinery</b><p>构建/测试门禁、合并验证、人工签收。</p></article>
+      </div>
+      <div class="glass process-note"><span class="mono">WATCHDOG</span> Witness / Deacon 持续巡检任务健康度；异常不靠人工“刷消息”发现，而进入可追踪的恢复和升级路径。</div>
+      <div class="deck-footer"><span>可拆分 · 可隔离 · 可回滚 · 可追溯</span><span class="slide-number" data-current="9" data-total="12"></span></div>
+      <div class="notes">讲清自动化并不等于无人负责。每一步都有 owner，真正高风险的权限、数据和生产决策仍然由 Crew 人工签收。</div>
+    </section>
+
+    <section class="slide" data-title="节省人力">
+      <p class="eyebrow">09 · Why multi-agent saves time</p>
+      <h2 class="gd-h2">节省的不是责任，<span class="gradient-text">而是等待、同步与返工。</span></h2>
+      <div class="compare">
+        <article><p>单线程交付</p><strong>串行等待</strong><ul><li>开发者边巡检边编码，文档后补</li><li>前端、数据、测试依次排队</li><li>人工催问、人工合并、人工同步状态</li></ul></article>
+        <div class="vs">→</div>
+        <article class="after"><p>Gastown 多 Agent</p><strong>并行可控</strong><ul><li>研究先取证，规格成为实现依据</li><li>依赖明确的工作包并行推进</li><li>Convoy / 巡检 / 合并门禁记录状态</li></ul></article>
+      </div>
+      <div class="metric-row four"><div><strong>并行</strong><span>研究、实现、测试可拆分</span></div><div><strong>隔离</strong><span>工作包在独立 worktree 执行</span></div><div><strong>门禁</strong><span>构建、测试、审查后再合并</span></div><div><strong>追溯</strong><span>任务状态与交付证据可复核</span></div></div>
+      <div class="deck-footer"><span>不承诺固定倍数；以范围、门禁和验收证据衡量价值</span><span class="slide-number" data-current="10" data-total="12"></span></div>
+      <div class="notes">解释时间口径不同：自然日、有效时段和人类直接投入不能混用。重点是把人从重复劳动转移到范围、风险与验收决策。</div>
+    </section>
+
+    <section class="slide" data-title="遗留系统治理">
+      <p class="eyebrow">10 · Quality evidence</p>
+      <h2 class="gd-h2">代码监管的价值：<span class="gradient-text">把维护风险变成下一批可执行任务。</span></h2>
+      <div class="legacy-grid anim-stagger-list">
+        <article class="glass"><span class="mono">C4</span><h3>架构理解</h3><p>为 renren-security 生成上下文、容器、组件、认证、系统管理、日志、任务、OSS 等结构文档。</p></article>
+        <article class="glass"><span class="mono">XRay</span><h3>演化取证</h3><p>3 次提交、78,117 churn、677 个热点/风险文件；定位最活跃目录 <span class="mono">renren-ui/src</span>。</p></article>
+        <article class="glass"><span class="mono">P0 / P1</span><h3>整改落地</h3><p>从 theme、全局样式、登录等热点开始，补测试、双人 review、拆耦合、建立 backup owner。</p></article>
+      </div>
+      <div class="glass slim"><b>从分析到行动</b><p>分析窗口内仅 1 位活跃贡献者；<span class="mono">theme/index.less</span>、<span class="mono">app.less</span> 等高变更样式热点均由单人主导（Top1 归属 100%）。平台据此生成 P0 专项：补回归测试、双人 review、建立 backup owner，并拆分主题职责。</p></div>
+      <div class="govern-line"><span>规格先于代码</span><i>·</i><span>工作隔离</span><i>·</i><span>自动与合并门禁</span><i>·</i><span>人工责任</span><i>·</i><span>可追溯交接</span></div>
+      <div class="deck-footer"><span>识别热点 · 形成计划 · 门禁执行 · 可追溯交接</span><span class="slide-number" data-current="11" data-total="12"></span></div>
+      <div class="notes">第 11 页呈现工程证据之后的治理闭环：平台不是只报风险，而是形成任务、门禁与交接机制。</div>
+    </section>
+
+    <section class="slide" data-title="客户试点">
+      <div class="ambient"><i></i><i></i><i></i></div>
+      <div class="cta-content">
+        <p class="eyebrow">Next move · Controlled pilot</p>
+        <h2 class="cta-title">选择一个真实模块，<br><span class="gradient-text">让结果先于争论出现。</span></h2>
+        <p class="cover-lede">在受控测试环境完成“导入 → 复刻 → 验证 → 交接”的首个闭环；以可运行代码和质量证据决定后续投入。</p>
+        <div class="pilot-steps"><span>项目画像与边界</span><i>→</i><span>可运行模块</span><i>→</i><span>构建/测试/视觉证据</span><i>→</i><span>交接与下一批计划</span></div>
+        <p class="mono command">$ start-pilot --scope one-module --evidence required</p>
+      </div>
+      <div class="deck-footer"><span>青岛红创 · Gastown 多 Agent AI 开发平台</span><span class="slide-number" data-current="12" data-total="12"></span></div>
+      <div class="notes">收尾不要承诺全系统替换。建议选择一个真实且边界明确的模块，在测试环境做首个闭环，形成可量化的合作基础。</div>
+    </section>
+  </div>
+  <script src="assets/runtime.js"></script>
+</body>
+</html>

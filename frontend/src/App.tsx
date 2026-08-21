@@ -406,10 +406,25 @@ type RiskRecord = {
   occurTime?: string;
 };
 const riskGroups: Record<string, string> = {
-  supv_enterprise_type_participation_comp: "主动管理型基金参股企业",
-  supv_enterprise_type_participation: "参股企业",
-  supv_enterprise_type_wholly: "全资企业",
+  supv_enterprise_type_controll: "控股不控权企业",
+  supv_enterprise_type_controll_affiliate: "控股不控权关联企业",
+  supv_enterprise_type_head: "集团本部",
   supv_enterprise_type_holding: "控股企业",
+  supv_enterprise_type_holding_comp: "主动管理型基金控股企业",
+  supv_enterprise_type_holding_other_shareholder: "控股企业其他股东",
+  supv_enterprise_type_invest_comp_controll: "主动管理型基金参股企业的实际控制人",
+  supv_enterprise_type_invest_sub: "主动管理型基金投资的子基金",
+  supv_enterprise_type_invest_sub_participation_comp: "主动管理型基金投资的子基金的参股企业",
+  supv_enterprise_type_manage: "集团直管",
+  supv_enterprise_type_manage_fund: "主动管理型基金",
+  supv_enterprise_type_manage_fund_manager: "基金执行事务合伙人/基金管理人",
+  supv_enterprise_type_participate_fund: "参与基金",
+  supv_enterprise_type_participate_fund_invest_comp: "参与基金投资企业",
+  supv_enterprise_type_participation: "参股企业",
+  supv_enterprise_type_participation_comp: "主动管理型基金参股企业",
+  supv_enterprise_type_participation_controll: "参股企业实际控制人",
+  supv_enterprise_type_participation_related: "参股企业关联企业",
+  supv_enterprise_type_wholly: "全资企业",
 };
 const riskLevels: Record<string, string> = {
   "0": "低风险",
@@ -825,11 +840,12 @@ function RiskEntryDialog({ departmentNames, onClose, onSave }: { departmentNames
     if (!enterpriseName || !form.riskIndicator?.trim() || !form.riskContent?.trim() || !form.riskType || !form.enterpriseGroup) { window.alert('请完整填写必填项'); return; }
     try {
       const token = await riskSessionToken();
-      const result = await fetch('/api/supervise/risk/manual', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, token }, body: JSON.stringify({ ...form, enterpriseName, riskIndicator: form.riskIndicator.trim(), riskContent: form.riskContent.trim(), occurTime: form.occurTime?.replace('T', ' ') || '', operator: '管理员' }) }).then(response => response.json());
+      const result = await fetch('/api/supervise/risk/manual', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, token }, body: JSON.stringify({ ...form, enterpriseName, riskIndicator: form.riskIndicator.trim(), riskContent: form.riskContent.trim(), occurTime: form.occurTime?.replace('T', ' ') || '', initialStatusText, operator: '管理员' }) }).then(response => response.json());
       if (result.code !== 0) throw new Error(result.msg || '保存失败');
       onSave();
     } catch (error) { window.alert(error instanceof Error ? error.message : '保存失败'); }
   };
+  const initialStatusText = form.belongingPlateId === 'groupHeadquarters' ? '情况描述' : '未确认';
   const select = (label: string, key: string, options: Array<[string, string]>) => <label className="risk-entry-field"><span>{label}</span><select value={form[key] || ''} onChange={event => set(key, event.target.value)}><option value="">请选择</option>{options.map(([value, text]) => <option key={value} value={value}>{text}</option>)}</select></label>;
   return <div className="dialog-mask risk-entry-mask" role="dialog" aria-modal="true" aria-label="新增风险信息"><section className="risk-entry-dialog"><button className="dialog-close" onClick={onClose}>×</button><h3>新增风险信息</h3><p className="risk-entry-hint">模拟企查查 / 运营平台风险数据；带 <b>*</b> 的字段为必填项。</p><div className="risk-entry-grid"><label className="risk-entry-field required"><span>企业名称</span><input ref={enterpriseInputRef} defaultValue="" placeholder="请输入企业名称" /></label>{select('企业分组', 'enterpriseGroup', Object.entries(enterpriseGroupCodes).map(([text, value]) => [value, text]))}{select('管理主体', 'belongingPlateId', Object.entries(riskManagers))}{select('主管部门', 'manageDeptId', Object.entries(departmentNames))}<label className="risk-entry-field required"><span>风险指标</span><select value={form.indicatorId || ''} onChange={event => selectIndicator(event.target.value)} disabled={indicatorLoading}><option value="">{indicatorLoading ? '加载指标中…' : '请选择指标管理中的指标'}</option>{indicators.map(item => <option key={item.id} value={item.id}>{item.indicatorName || '--'}</option>)}</select></label>{select('风险主类', 'riskMainType', [['supv_risk_cat_main', '主体资质与工商管控风险'], ['supv_risk_cat_stock', '股权穿透与股东管控风险'], ['supv_risk_cat_governance', '治理与人员管控风险'], ['supv_risk_cat_law', '法律与司法涉诉风险'], ['supv_risk_cat_business', '经营运营与资质合规风险'], ['supv_risk_cat_financial', '财务与资金管控风险']])}{select('风险类型', 'riskType', Object.entries(riskTypes))}{select('风险级别', 'riskLevel', Object.entries(riskLevels))}<label className="risk-entry-field"><span>风险状态</span><input className="risk-entry-readonly" value="未确认" readOnly /></label>{select('风险来源', 'indicatorSource', [['0', '企查查'], ['1', '运营平台'], ['2', '金企通']])}<label className="risk-entry-field"><span>发生日期</span><input type="datetime-local" value={form.occurTime || ''} onChange={event => set('occurTime', event.target.value)} /></label><label className="risk-entry-field"><span>持股比例</span><input value={form.shareholdingRatio || ''} onChange={event => set('shareholdingRatio', event.target.value)} placeholder="例如：0.55%" /></label><label className="risk-entry-field"><span>投资金额</span><input value={form.investmentAmount || ''} onChange={event => set('investmentAmount', event.target.value)} placeholder="请输入投资金额" /></label><label className="risk-entry-field"><span>企业信用代码</span><input value={form.creditCode || ''} onChange={event => set('creditCode', event.target.value)} placeholder="请输入统一社会信用代码" /></label><label className="risk-entry-field"><span>企查查 ID</span><input value={form.qccId || ''} onChange={event => set('qccId', event.target.value)} placeholder="请输入企查查 ID" /></label><label className="risk-entry-field"><span>指标别名编码</span><input value={form.metricsAliasCode || ''} onChange={event => set('metricsAliasCode', event.target.value)} placeholder="请输入指标别名编码" /></label><label className="risk-entry-field risk-entry-upload"><span>股权结构图</span><div><input type="file" accept="image/*" onChange={event => selectImage(event.target.files?.[0])} /><small>{imageName || '请选择图片附件'}</small>{form.image && <img src={form.image} alt="股权结构图预览" />}</div></label><label className="risk-entry-field risk-entry-content required"><span>风险内容</span><textarea value={form.riskContent || ''} onChange={event => set('riskContent', event.target.value)} placeholder="请输入风险内容" /></label></div><footer className="dialog-actions"><button className="primary" onClick={save}>保存</button><button onClick={onClose}>取消</button></footer></section></div>;
 }

@@ -39,12 +39,14 @@
   (if (some #(str/blank? (str (get risk %)))
             [:enterprise_name :risk_indicator :risk_content :risk_type :enterprise_group])
     (error "请填写企业、指标、风险内容、风险类型和企业分组")
-    (let [risk-id (entity-id)]
+    (let [risk-id (entity-id)
+          description-required? (= "groupHeadquarters" (:belonging_plate_id risk))
+          initial-status (if description-required? description-pending unconfirmed)]
       (db/transaction! datasource
                        (fn [tx]
                          (db/create-manual-risk!
                           tx
-                          (merge {:id risk-id
+                          (merge {:id risk-id :operation_status initial-status
                                   :image nil :metrics_name nil :risk_main_type nil
                                   :risk_level "1" :occur_time (str (java.time.LocalDateTime/now))
                                   :dept_id nil :metrics_alias_code nil :qcc_id nil :credit_code nil
@@ -52,8 +54,14 @@
                                   :indicator_source 0}
                                  risk))
                          (log! tx risk-id "RISK_CREATED" "已新增按指标映射的风险数据" (operator risk))
-                         (todo! tx "CONFIRMATION" risk-id (:dept_id risk))
-                         (success {:riskId (str risk-id) :operationStatus unconfirmed}))))))
+                         (if description-required?
+                           (do (db/create-description-draft! tx {:risk_id risk-id :occurrence_reason nil :decision_body nil
+                                                                 :reported_to_group 0 :report_content nil :attachments nil
+                                                                 :submitter nil :due_at (str (.plusDays (java.time.LocalDateTime/now) 3))})
+                               (log! tx risk-id "DESCRIPTION_CREATED" "已创建情况描述待办" "系统")
+                               (todo! tx "DESCRIPTION" risk-id "集团本部"))
+                           (todo! tx "CONFIRMATION" risk-id (:dept_id risk)))
+                         (success {:riskId (str risk-id) :operationStatus initial-status}))))))
 
 (defn initialize-description! [datasource risk-id due-at]
   "将已按指标映射生成的二级企业风险置为情况描述待办。"
